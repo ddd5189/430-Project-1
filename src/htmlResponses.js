@@ -11,32 +11,19 @@ const clientResponse = (request, response, content, type, statusCode) => {
   response.writeHead(statusCode, { 'Content-Type': type });
   response.write(content);
   response.end();
-}
-
-const getIndexResponse = (request, response) => {
-  return clientResponse(request, response, indexPage, 'text/html', 200);
 };
 
-const getAppResponse = (request, response) => {
-  return clientResponse(request, response, appPage, 'text/html', 200);
-};
+const getIndexResponse = (request, response) => clientResponse(request, response, indexPage, 'text/html', 200);
 
-const getSubmitResponse = (request, response) => {
-  return clientResponse(request, response, submitPage, 'text/html', 200);
-};
+const getAppResponse = (request, response) => clientResponse(request, response, appPage, 'text/html', 200);
 
-const getAdminResponse = (request, response) => {
-  return clientResponse(request, response, adminPage, 'text/html', 200);
-};
+const getSubmitResponse = (request, response) => clientResponse(request, response, submitPage, 'text/html', 200);
 
-const get404Response = (request, response) => {
-  return clientResponse(request, response, errorPage, 'text/html', 404);
-};
+const getAdminResponse = (request, response) => clientResponse(request, response, adminPage, 'text/html', 200);
 
-const getStylesResponse = (request, response) => {
-  return clientResponse(request, response, cssFile, 'text/css', 200);
+const get404Response = (request, response) => clientResponse(request, response, errorPage, 'text/html', 404);
 
-};
+const getStylesResponse = (request, response) => clientResponse(request, response, cssFile, 'text/css', 200);
 
 module.exports = {
   getIndexResponse,

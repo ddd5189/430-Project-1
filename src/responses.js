@@ -1,49 +1,46 @@
 // adding underscore for shuffle
-const _ = require('underscore');
+// const _ = require('underscore');
 
 // random joke array
 
-let reviews = {
-  id : {
-    game: "gameName",
-    rating: "gameRating",
-    review: "reviewContent"
+const reviews = {
+  id: {
+    game: 'gameName',
+    rating: 'gameRating',
+    review: 'reviewContent',
   },
-  id2 : {
-    game: "gameName2",
-    rating: "gameRating2",
-    review: "reviewContent2"
+  id2: {
+    game: 'gameName2',
+    rating: 'gameRating2',
+    review: 'reviewContent2',
   },
 };
-
-
-
 
 // when using underscores shuffle feature, it didn't keep the q and a pairings intact
 // so this map uses the above array as a key to make sure it has the right a
 // I imagine this isn't the proper way to do this
 // but I wasn't sure in the moment what other ways there were
-const randomJokeMap = {
-  'What do you call a very small valentine?': 'A valen-tiny!',
-  'What did the dog say when he rubbed his tail on the sandpaper?': 'Ruff, Ruff!',
-  "Why don't sharks like to eat clowns?": 'Because they taste funny!',
-  'What did the fish say when be bumped his head?': 'Dam!',
-  'What did one elevator say to the other elevator?': "I think I'm coming down with something!",
-  'What does a nosey pepper do?': 'Gets jalapeno business!',
-  'What do you call a cow with a twitch?': 'Beef jerky!',
-  'What do you call a computer that sings?': 'A-Dell!',
-  'Why did the robber take a bath?': 'They wanted to make a clean getaway!',
-  'What did the 0 say to the 8?': 'Nice belt!',
-};
+// const randomJokeMap = {
+//   'What do you call a very small valentine?': 'A valen-tiny!',
+//   'What did the dog say when he rubbed his tail on the sandpaper?': 'Ruff, Ruff!',
+//   "Why don't sharks like to eat clowns?": 'Because they taste funny!',
+//   'What did the fish say when be bumped his head?': 'Dam!',
+//   'What did one elevator say to the other elevator?': "I think I'm coming down with something!",
+//   'What does a nosey pepper do?': 'Gets jalapeno business!',
+//   'What do you call a cow with a twitch?': 'Beef jerky!',
+//   'What do you call a computer that sings?': 'A-Dell!',
+//   'Why did the robber take a bath?': 'They wanted to make a clean getaway!',
+//   'What did the 0 say to the 8?': 'Nice belt!',
+// };
 
 // validate the limit param
-const testParam = (limitParam) => {
-  let limit = Number(limitParam);
-  limit = !limit ? 1 : limit;
-  limit = limit < 1 ? 1 : limit;
-  limit = limit > 10 ? 10 : limit;
-  return limit;
-};
+// const testParam = (limitParam) => {
+//   let limit = Number(limitParam);
+//   limit = !limit ? 1 : limit;
+//   limit = limit < 1 ? 1 : limit;
+//   limit = limit > 10 ? 10 : limit;
+//   return limit;
+// };
 
 // return accepted type
 const findType = (acceptedTypes) => {
@@ -77,7 +74,7 @@ const getMetaData = (request, response, content, acceptedTypes) => {
 // function to get one joke in either json or xml
 const getRandomReview = (acceptedTypes) => {
   // get a random number for selecting which joke
-  const review = Math.floor(Math.random() * 10);
+  // const review = Math.floor(Math.random() * 10);
   // client asked for xml
   if (acceptedTypes[0] === 'text/xml') {
     const xmlResponse = `<review><Game>${reviews.id.game}</game><Rating>${reviews.id.rating}</Rating><Review>${reviews.id.review}</Review></joke>`;
@@ -93,37 +90,38 @@ const getRandomReview = (acceptedTypes) => {
 };
 
 // function to get multiple jokes
-const getRandomJokes = (limitParam = 1, acceptedTypes) => {
-  // test the limit
-  const limit = testParam(limitParam);
-  // shuffle the q array
-  randomJoke = _.shuffle(randomJoke);
+// const getRandomJokes = (limitParam = 1, acceptedTypes) => {
+//   // test the limit
+//   const limit = testParam(limitParam);
+//   // shuffle the q array
+//   //randomJoke = _.shuffle(randomJoke);
 
-  // client asked for xml
-  if (acceptedTypes[0] === 'text/xml') {
-    let xmlResponse = '<jokes>';
+//   // client asked for xml
+//   if (acceptedTypes[0] === 'text/xml') {
+//     let xmlResponse = '<jokes>';
 
-    for (let i = 0; i < limit; i += 1) {
-      xmlResponse = `${xmlResponse}<joke><q>${randomJoke[i]}</q><a>${randomJokeMap[randomJoke[i]]}</a></joke>`;
-    }
-    xmlResponse = `${xmlResponse} </jokes>`;
-    return xmlResponse;
-  }
+//     for (let i = 0; i < limit; i += 1) {
+//       xmlResponse = `${xmlResponse}<joke><q>${randomJoke[i]}
+//                     </q><a>${randomJokeMap[randomJoke[i]]}</a></joke>`;
+//     }
+//     xmlResponse = `${xmlResponse} </jokes>`;
+//     return xmlResponse;
+//   }
 
-  // defualt
-  let jsonResponse;
-  const jsonResponseReturn = [];
+//   // defualt
+//   let jsonResponse;
+//   const jsonResponseReturn = [];
 
-  for (let i = 0; i < limit; i += 1) {
-    jsonResponse = {
-      q: randomJoke[i],
-      a: randomJokeMap[randomJoke[i]],
-    };
+//   for (let i = 0; i < limit; i += 1) {
+//     jsonResponse = {
+//       q: randomJoke[i],
+//       a: randomJokeMap[randomJoke[i]],
+//     };
 
-    jsonResponseReturn.push(jsonResponse);
-  }
-  return JSON.stringify(jsonResponseReturn);
-};
+//     jsonResponseReturn.push(jsonResponse);
+//   }
+//   return JSON.stringify(jsonResponseReturn);
+// };
 
 const getRandomReviewResponse = (request, response, acceptedTypes, httpMethod) => {
   if (httpMethod === 'GET') {
@@ -133,22 +131,22 @@ const getRandomReviewResponse = (request, response, acceptedTypes, httpMethod) =
   }
 };
 
-const getRandomJokesResponse = (request, response, acceptedTypes, httpMethod, params) => {
-  if (httpMethod === 'GET') {
-    // eslint said this line was too long
-    respond(
-      request,
-      response,
-      getRandomJokes(params.limit, acceptedTypes),
-      findType(acceptedTypes),
-      200,
-    );
-  } else if (httpMethod === 'HEAD') {
-    getMetaData(request, response, getRandomJokes(params.limit, acceptedTypes), acceptedTypes);
-  }
-};
+// const getRandomJokesResponse = (request, response, acceptedTypes, httpMethod, params) => {
+//   if (httpMethod === 'GET') {
+//     // eslint said this line was too long
+//     respond(
+//       request,
+//       response,
+//       getRandomJokes(params.limit, acceptedTypes),
+//       findType(acceptedTypes),
+//       200,
+//     );
+//   } else if (httpMethod === 'HEAD') {
+//     getMetaData(request, response, getRandomJokes(params.limit, acceptedTypes), acceptedTypes);
+//   }
+// };
 
 module.exports = {
   getRandomReviewResponse,
-  getRandomJokesResponse,
+  // getRandomJokesResponse,
 };
