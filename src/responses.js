@@ -2,18 +2,22 @@
 const _ = require('underscore');
 
 // random joke array
-let randomJoke = [
-  'What do you call a very small valentine?',
-  'What did the dog say when he rubbed his tail on the sandpaper?',
-  "Why don't sharks like to eat clowns?",
-  'What did the fish say when be bumped his head?',
-  'What did one elevator say to the other elevator?',
-  'What does a nosey pepper do?',
-  'What do you call a cow with a twitch?',
-  'What do you call a computer that sings?',
-  'Why did the robber take a bath?',
-  'What did the 0 say to the 8?',
-];
+
+let reviews = {
+  id : {
+    game: "gameName",
+    rating: "gameRating",
+    review: "reviewContent"
+  },
+  id2 : {
+    game: "gameName2",
+    rating: "gameRating2",
+    review: "reviewContent2"
+  },
+};
+
+
+
 
 // when using underscores shuffle feature, it didn't keep the q and a pairings intact
 // so this map uses the above array as a key to make sure it has the right a
@@ -71,18 +75,19 @@ const getMetaData = (request, response, content, acceptedTypes) => {
 };
 
 // function to get one joke in either json or xml
-const getRandomJoke = (acceptedTypes) => {
+const getRandomReview = (acceptedTypes) => {
   // get a random number for selecting which joke
-  const joke = Math.floor(Math.random() * 10);
+  const review = Math.floor(Math.random() * 10);
   // client asked for xml
   if (acceptedTypes[0] === 'text/xml') {
-    const xmlResponse = `<joke><q>${randomJoke[joke]}</q><a>${randomJokeMap[randomJoke[joke]]}</a></joke>`;
+    const xmlResponse = `<review><Game>${reviews.id.game}</game><Rating>${reviews.id.rating}</Rating><Review>${reviews.id.review}</Review></joke>`;
     return xmlResponse;
   }
   // defualt
   const jsonResponse = {
-    q: randomJoke[joke],
-    a: randomJokeMap[randomJoke[joke]],
+    game: reviews.id.game,
+    rating: reviews.id.rating,
+    review: reviews.id.review,
   };
   return JSON.stringify(jsonResponse);
 };
@@ -120,11 +125,11 @@ const getRandomJokes = (limitParam = 1, acceptedTypes) => {
   return JSON.stringify(jsonResponseReturn);
 };
 
-const getRandomJokeResponse = (request, response, acceptedTypes, httpMethod) => {
+const getRandomReviewResponse = (request, response, acceptedTypes, httpMethod) => {
   if (httpMethod === 'GET') {
-    respond(request, response, getRandomJoke(acceptedTypes), findType(acceptedTypes), 200);
+    respond(request, response, getRandomReview(acceptedTypes), findType(acceptedTypes), 200);
   } else if (httpMethod === 'HEAD') {
-    getMetaData(request, response, getRandomJoke(acceptedTypes), acceptedTypes);
+    getMetaData(request, response, getRandomReview(acceptedTypes), acceptedTypes);
   }
 };
 
@@ -144,7 +149,6 @@ const getRandomJokesResponse = (request, response, acceptedTypes, httpMethod, pa
 };
 
 module.exports = {
-  getRandomJokeResponse,
+  getRandomReviewResponse,
   getRandomJokesResponse,
-
 };

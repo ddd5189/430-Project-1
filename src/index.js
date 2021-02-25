@@ -10,9 +10,12 @@ const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 // 3 - urlStruct
 const urlStruct = {
-  '/random-joke': responseHandler.getRandomJokeResponse,
+  '/': htmlHandler.getIndexResponse,
+  '/app': htmlHandler.getAppResponse,
+  '/submit': htmlHandler.getSubmitResponse,
+  '/admin': htmlHandler.getAdminResponse,
+  '/random-joke': responseHandler.getRandomReviewResponse,
   '/random-jokes': responseHandler.getRandomJokesResponse,
-  '/joke-client.html': htmlHandler.getIndexResponse,
   '/styles/default-styles.css': htmlHandler.getStylesResponse,
   notFound: htmlHandler.get404Response,
 };
