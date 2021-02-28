@@ -1,46 +1,70 @@
 // adding underscore for shuffle
-// const _ = require('underscore');
+const _ = require('underscore');
 
-// random joke array
-
+// object of all the reviews
 const reviews = {
   id: {
     game: 'gameName',
     rating: 'gameRating',
+    platforms:
+      [
+        'gamePlatform1',
+        'gamePlatform2',
+      ],
     review: 'reviewContent',
   },
   id2: {
     game: 'gameName2',
     rating: 'gameRating2',
+    platforms:
+    [
+      'gamePlatform1',
+      'gamePlatform3',
+    ],
     review: 'reviewContent2',
+  },
+  id3: {
+    game: 'gameName3',
+    rating: 'gameRating3',
+    platforms:
+    [
+      'gamePlatform2',
+      'gamePlatform3',
+    ],
+    review: 'reviewContent3',
+  },
+  id4: {
+    game: 'gameName4',
+    rating: 'gameRating4',
+    platforms:
+    [
+      'gamePlatform1',
+      'gamePlatform2',
+    ],
+    review: 'reviewContent4',
   },
 };
 
-// when using underscores shuffle feature, it didn't keep the q and a pairings intact
-// so this map uses the above array as a key to make sure it has the right a
-// I imagine this isn't the proper way to do this
-// but I wasn't sure in the moment what other ways there were
-// const randomJokeMap = {
-//   'What do you call a very small valentine?': 'A valen-tiny!',
-//   'What did the dog say when he rubbed his tail on the sandpaper?': 'Ruff, Ruff!',
-//   "Why don't sharks like to eat clowns?": 'Because they taste funny!',
-//   'What did the fish say when be bumped his head?': 'Dam!',
-//   'What did one elevator say to the other elevator?': "I think I'm coming down with something!",
-//   'What does a nosey pepper do?': 'Gets jalapeno business!',
-//   'What do you call a cow with a twitch?': 'Beef jerky!',
-//   'What do you call a computer that sings?': 'A-Dell!',
-//   'Why did the robber take a bath?': 'They wanted to make a clean getaway!',
-//   'What did the 0 say to the 8?': 'Nice belt!',
-// };
+// array to allow indexing of the reviews
+// when a user posts new data it will be added to this
+let reviewArray = [
+  reviews.id,
+  reviews.id2,
+  reviews.id3,
+  reviews.id4,
+];
+
+// amount of reviews
+const amountOfReviews = reviewArray.length;
 
 // validate the limit param
-// const testParam = (limitParam) => {
-//   let limit = Number(limitParam);
-//   limit = !limit ? 1 : limit;
-//   limit = limit < 1 ? 1 : limit;
-//   limit = limit > 10 ? 10 : limit;
-//   return limit;
-// };
+const testParam = (limitParam) => {
+  let limit = Number(limitParam);
+  limit = !limit ? 1 : limit;
+  limit = limit < 1 ? 1 : limit;
+  limit = limit > amountOfReviews ? amountOfReviews : limit;
+  return limit;
+};
 
 // return accepted type
 const findType = (acceptedTypes) => {
@@ -74,54 +98,72 @@ const getMetaData = (request, response, content, acceptedTypes) => {
 // function to get one joke in either json or xml
 const getRandomReview = (acceptedTypes) => {
   // get a random number for selecting which joke
-  // const review = Math.floor(Math.random() * 10);
+  const reviewNumber = Math.floor(Math.random() * amountOfReviews);
+
+  const review = reviewArray[reviewNumber];
+
   // client asked for xml
   if (acceptedTypes[0] === 'text/xml') {
-    const xmlResponse = `<review><Game>${reviews.id.game}</game><Rating>${reviews.id.rating}</Rating><Review>${reviews.id.review}</Review></joke>`;
+    const xmlResponse = `<review><Game>${review.game}</game><Rating>${review.rating}</Rating><Platforms>${review.platforms}</Platforms><Review>${review.review}</Review></review>`;
     return xmlResponse;
   }
   // defualt
   const jsonResponse = {
-    game: reviews.id.game,
-    rating: reviews.id.rating,
-    review: reviews.id.review,
+    game: review.game,
+    rating: review.rating,
+    platforms: review.platforms,
+    review: review.review,
   };
   return JSON.stringify(jsonResponse);
 };
 
 // function to get multiple jokes
-// const getRandomJokes = (limitParam = 1, acceptedTypes) => {
-//   // test the limit
-//   const limit = testParam(limitParam);
-//   // shuffle the q array
-//   //randomJoke = _.shuffle(randomJoke);
+const getRandomReviews = (params, acceptedTypes) => {
+  const limitParam = params.limit;
+  const platformParam = params.platform;
+  // test the limit
+  const limit = testParam(limitParam);
+  // shuffle the q array
+  reviewArray = _.shuffle(reviewArray);
 
-//   // client asked for xml
-//   if (acceptedTypes[0] === 'text/xml') {
-//     let xmlResponse = '<jokes>';
+  // client asked for xml
+  if (acceptedTypes[0] === 'text/xml') {
+    let xmlResponse = '<reviews>';
 
-//     for (let i = 0; i < limit; i += 1) {
-//       xmlResponse = `${xmlResponse}<joke><q>${randomJoke[i]}
-//                     </q><a>${randomJokeMap[randomJoke[i]]}</a></joke>`;
-//     }
-//     xmlResponse = `${xmlResponse} </jokes>`;
-//     return xmlResponse;
-//   }
+    for (let i = 0; i < limit; i += 1) {
+      xmlResponse = `${xmlResponse}<review><Game>${reviewArray[i].game}
+                    </Game><Rating>${reviewArray[i].rating}</Rating><Platforms>${reviewArray[i].platforms}</Platforms>
+                    <Review>${reviewArray[i].review}</Review></review>`;
+    }
+    xmlResponse = `${xmlResponse} </reviews>`;
+    return xmlResponse;
+  }
 
-//   // defualt
-//   let jsonResponse;
-//   const jsonResponseReturn = [];
+  // defualt
+  let jsonResponse;
+  const jsonResponseReturn = [];
 
-//   for (let i = 0; i < limit; i += 1) {
-//     jsonResponse = {
-//       q: randomJoke[i],
-//       a: randomJokeMap[randomJoke[i]],
-//     };
-
-//     jsonResponseReturn.push(jsonResponse);
-//   }
-//   return JSON.stringify(jsonResponseReturn);
-// };
+  // testing check for if the platform param is used only send back objects with that platform
+  for (let i = 0; i < limit; i += 1) {
+    if (platformParam != null && reviewArray[i].platforms.includes(platformParam)) {
+      jsonResponse = {
+        game: reviewArray[i].game,
+        rating: reviewArray[i].rating,
+        platforms: reviewArray[i].platforms,
+        review: reviewArray[i].review,
+      };
+    } else {
+      jsonResponse = {
+        game: reviewArray[i].game,
+        rating: reviewArray[i].rating,
+        platforms: reviewArray[i].platforms,
+        review: reviewArray[i].review,
+      };
+    }
+    jsonResponseReturn.push(jsonResponse);
+  }
+  return JSON.stringify(jsonResponseReturn);
+};
 
 const getRandomReviewResponse = (request, response, acceptedTypes, httpMethod) => {
   if (httpMethod === 'GET') {
@@ -131,22 +173,22 @@ const getRandomReviewResponse = (request, response, acceptedTypes, httpMethod) =
   }
 };
 
-// const getRandomJokesResponse = (request, response, acceptedTypes, httpMethod, params) => {
-//   if (httpMethod === 'GET') {
-//     // eslint said this line was too long
-//     respond(
-//       request,
-//       response,
-//       getRandomJokes(params.limit, acceptedTypes),
-//       findType(acceptedTypes),
-//       200,
-//     );
-//   } else if (httpMethod === 'HEAD') {
-//     getMetaData(request, response, getRandomJokes(params.limit, acceptedTypes), acceptedTypes);
-//   }
-// };
+const getRandomReviewsResponse = (request, response, acceptedTypes, httpMethod, params) => {
+  if (httpMethod === 'GET') {
+    // eslint said this line was too long
+    respond(
+      request,
+      response,
+      getRandomReviews(params, acceptedTypes),
+      findType(acceptedTypes),
+      200,
+    );
+  } else if (httpMethod === 'HEAD') {
+    getMetaData(request, response, getRandomReviews(params, acceptedTypes), acceptedTypes);
+  }
+};
 
 module.exports = {
   getRandomReviewResponse,
-  // getRandomJokesResponse,
+  getRandomReviewsResponse,
 };

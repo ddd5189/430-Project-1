@@ -8,13 +8,15 @@
             console.log("e.target.response = ", e.target.response); // so that means this is a string of "joke" JSON
             const obj = JSON.parse(e.target.response); // turn it back into an object
             console.log("obj=", obj);
-            // now go ahead and update #jokeContainer with the contents of the joke
 
             // const for dom elements
-            const jokeContainerDom = document.querySelector("#jokeContainer");
-            const jokesContainerDom = document.querySelector("#jokesContainer");
+            const reviewContainerDom = document.querySelector("#reviewContainer");
+            const reviewsContainerDom = document.querySelector("#reviewsContainer");
 
-            jokeContainerDom.innerHTML = 
+            console.log(Object.keys(obj).length);
+            // check if there are are more than 1 joke in the obj
+            if (Object.keys(obj).length === 4){
+              reviewContainerDom.innerHTML = 
                 `<p>
                     <b>Game: ${obj.game}</b>
                 </p>
@@ -22,43 +24,48 @@
                     <b><i>Rating: ${obj.rating}</i></b>
                 </p>
                 <p>
+                    <b>Platforms: ${obj.platforms}</b>
+                </p>
+                <p>
                     <b>Review: ${obj.review}</b>
                 </p>`;
-
-            // // check if there are are more than 1 joke in the obj
-            // if (Object.keys(obj).length === 2){
-               
-            // } else {
-            //     // clear the previous jokes so there is only ever 5
-            //     jokesContainerDom.innerHTML = ``;
-            //     for (let i = 0; i < 5; i++){
-            //         jokesContainerDom.innerHTML += 
-            //         `<p>
-            //             <b>${obj[i].q}</b>
-            //         </p>
-            //         <p>
-            //             <b><i>${obj[i].a}</i></b>
-            //         </p>
-            //         <hr>`;
-            //     }
-            // }
+            } else {
+                // clear the previous jokes so there is only ever 5
+                reviewsContainerDom.innerHTML = ``;
+                for (let i = 0; i < 2; i++){
+                    reviewsContainerDom.innerHTML += 
+                    `<p>
+                        <b>Game: ${obj[i].game}</b>
+                    </p>
+                    <p>
+                        <b><i>Rating: ${obj[i].rating}</i></b>
+                    </p>
+                    <p>
+                        <b>Platforms: ${obj[i].platforms}</b>
+                    </p>
+                    <p>
+                        <b>Review: ${obj[i].review}</b>
+                    </p>
+                    <hr>`;
+                }
+            }
         };
 
-        const downloadJoke = (e) => {
+        const downloadReview = (e) => {
             // remember that an `Event` object gets passed along every time that an event handler or listener calls a function
             // the `target` property of that event points at the element that sent the event, in this case a button
             console.log(`An element of id=${e.target.id} was clicked!`);
 
-            let jokeURL = "???";
-            if (e.target.id === "btnJoke"){
-                jokeURL = "/random-joke";
+            let reviewURL = "???";
+            if (e.target.id === "btnReview"){
+                reviewURL = "/review";
             } else {
-                jokeURL = "/random-jokes?limit=5";
+                reviewURL = "/reviews?limit=2";
             }
 
             const xhr = new XMLHttpRequest();
             xhr.onload = handleResponse;
-            xhr.open("GET",jokeURL);
+            xhr.open("GET", reviewURL);
             // with XHR, after we open a conncetion, but before we `send()`, we can set 1 or more HTTP request headers
             // this isn't strictly necessary becasue "/random-joke" sends JSON by default
             xhr.setRequestHeader('Accept', "application/javascript");
@@ -70,8 +77,8 @@
             // document.querySelector("#btnJoke").onclick = downloadJoke; // same as below, less typing, use which ever version you prefer
       
             // An Event *Listener*
-            document.querySelector("#btnJoke").addEventListener("click", downloadJoke);
-            document.querySelector("#btnJokes").addEventListener("click", downloadJoke);
+            document.querySelector("#btnReview").addEventListener("click", downloadReview);
+            document.querySelector("#btnReviews").addEventListener("click", downloadReview);
       
             // **Actually, event handlers and listeners are NOT exactly the same in all use cases - what ARE the differences?**
         };
@@ -94,19 +101,19 @@
     
     <section>
       <h2>Click to Get a Review!</h2>
-      <p><button id="btnJoke">Show me a Joke!</button></p>
-      <div id="jokeContainer">
+      <p><button id="btnReview">Get a Review</button></p>
+      <div id="reviewContainer">
         
       </div>
     </section>
     
-    <!-- <section>
-      <h2>How about 5 jokes?</h2>
-      <p><button id="btnJokes">Show me 5 Jokes!</button></p>
-      <div id="jokesContainer">
+    <section>
+      <h2>How about 2 Reviews?</h2>
+      <p><button id="btnReviews">Get 2 Reviews</button></p>
+      <div id="reviewsContainer">
         
-    </div>
-    </section> -->
+      </div>
+    </section>
     
   </body>
 </html>

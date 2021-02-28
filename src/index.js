@@ -1,26 +1,26 @@
-// 1 - pull in the HTTP server module and other moduls
+// pull in the HTTP server module and other moduls
 const http = require('http');
 const url = require('url');
 const query = require('querystring');
 const htmlHandler = require('./htmlResponses.js');
 const responseHandler = require('./responses.js');
 
-// 2 - locally this will be 3000, on Heroku it will be assigned
+// locally this will be 3000, on Heroku it will be assigned
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-// 3 - urlStruct
+// urlStruct
 const urlStruct = {
   '/': htmlHandler.getIndexResponse,
   '/app': htmlHandler.getAppResponse,
   '/submit': htmlHandler.getSubmitResponse,
   '/admin': htmlHandler.getAdminResponse,
-  '/random-joke': responseHandler.getRandomReviewResponse,
-  '/random-jokes': responseHandler.getRandomJokesResponse,
+  '/review': responseHandler.getRandomReviewResponse,
+  '/reviews': responseHandler.getRandomReviewsResponse,
   '/styles/default-styles.css': htmlHandler.getStylesResponse,
   notFound: htmlHandler.get404Response,
 };
 
-// 4 - this is the function that will be called every time a client request comes in
+// this is the function that will be called every time a client request comes in
 // this time we will look at the `pathname`, and send back the appropriate page
 // note that in this course we'll be using arrow functions 100% of the time in our server-side code
 const onRequest = (request, response) => {
@@ -39,5 +39,5 @@ const onRequest = (request, response) => {
   }
 };
 
-// 5 - create the server, hook up the request handling function, and start listening on `port`
+// create the server, hook up the request handling function, and start listening on `port`
 http.createServer(onRequest).listen(port);
