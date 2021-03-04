@@ -1,5 +1,7 @@
 // adding underscore for shuffle
 const _ = require('underscore');
+// adding uuid for unique ids
+const { v4: uuidv4 } = require('uuid');
 
 // object of all the reviews
 const reviews = {
@@ -11,7 +13,7 @@ const reviews = {
         'gamePlatform1',
         'gamePlatform2',
       ],
-    review: 'reviewContent',
+    content: 'reviewContent',
   },
   id2: {
     game: 'gameName2',
@@ -21,7 +23,7 @@ const reviews = {
       'gamePlatform1',
       'gamePlatform3',
     ],
-    review: 'reviewContent2',
+    content: 'reviewContent2',
   },
   id3: {
     game: 'gameName3',
@@ -31,7 +33,7 @@ const reviews = {
       'gamePlatform2',
       'gamePlatform3',
     ],
-    review: 'reviewContent3',
+    content: 'reviewContent3',
   },
   id4: {
     game: 'gameName4',
@@ -41,7 +43,7 @@ const reviews = {
       'gamePlatform1',
       'gamePlatform2',
     ],
-    review: 'reviewContent4',
+    content: 'reviewContent4',
   },
 };
 
@@ -55,10 +57,10 @@ let reviewArray = [
 ];
 
 // amount of reviews
-const amountOfReviews = reviewArray.length;
+let amountOfReviews = reviewArray.length;
 
 // validate the limit param
-const testParam = (limitParam) => {
+const testLimitParam = (limitParam) => {
   let limit = Number(limitParam);
   limit = !limit ? 1 : limit;
   limit = limit < 1 ? 1 : limit;
@@ -95,24 +97,50 @@ const getMetaData = (request, response, content, acceptedTypes) => {
   response.end();
 };
 
-// function to get one joke in either json or xml
-const getRandomReview = (acceptedTypes) => {
-  // get a random number for selecting which joke
-  const reviewNumber = Math.floor(Math.random() * amountOfReviews);
+// "Meta" refers to *meta data*, in this case the HTTP headers
+// const sendJSONResponseMeta = (request, response, responseCode) => {
+//   response.writeHead(responseCode, { 'Content-Type': 'application/json' });
+//   response.end();
+// };
 
-  const review = reviewArray[reviewNumber];
+// function to get one joke in either json or xml
+const getRandomReview = (params, acceptedTypes) => {
+  const platformParam = params.platform;
+
+  // get a random number for selecting which joke
+  let reviewNumber = Math.floor(Math.random() * amountOfReviews);
+
+  let review;
+
+  if (platformParam != null) {
+    // array to store objects with requested platform
+    const platformArray = [];
+    // add the objects from the full array if they have the platform
+    for (let i = 0; i < reviewArray.length; i += 1) {
+      const element = reviewArray[i];
+      if (element.platforms.includes(platformParam)) {
+        platformArray.push(element);
+      }
+    }
+    // then set the review array equal to our new array
+    // and make sure the random number recieved doesn't go out of bounds
+    if (reviewNumber >= platformArray.length) {
+      reviewNumber = Math.floor(Math.random() * platformArray.length);
+    }
+    review = platformArray[reviewNumber];
+    // if there is no platformParam return normally
+  } else {
+    review = reviewArray[reviewNumber];
+  }
 
   // client asked for xml
   if (acceptedTypes[0] === 'text/xml') {
-    const xmlResponse = `<review><Game>${review.game}</game><Rating>${review.rating}</Rating><Platforms>${review.platforms}</Platforms><Review>${review.review}</Review></review>`;
+    const xmlResponse = `<review><Game>${review.game}</game><Rating>${review.rating}</Rating><Platforms>${review.platforms}</Platforms><Review>${review.content}</Review></review>`;
     return xmlResponse;
   }
   // defualt
   const jsonResponse = {
-    game: review.game,
-    rating: review.rating,
-    platforms: review.platforms,
-    review: review.review,
+    review,
   };
   return JSON.stringify(jsonResponse);
 };
@@ -121,12 +149,26 @@ const getRandomReview = (acceptedTypes) => {
 const getRandomReviews = (params, acceptedTypes) => {
   const limitParam = params.limit;
   const platformParam = params.platform;
+
   // test the limit
-  const limit = testParam(limitParam);
+  const limit = testLimitParam(limitParam);
+
   // shuffle the q array
   reviewArray = _.shuffle(reviewArray);
 
-  // client asked for xml
+  // create an array that only has the objects that have the requested platform
+  const platformArray = [];
+  if (platformParam != null) {
+    for (let i = 0; i < reviewArray.length; i += 1) {
+      const element = reviewArray[i];
+      if (element.platforms.includes(platformParam)) {
+        platformArray.push(element);
+      }
+    }
+  }
+  // reviewArray.platforms.includes(platformParam)
+
+  // client asked for xml NEED TO UPDATE
   if (acceptedTypes[0] === 'text/xml') {
     let xmlResponse = '<reviews>';
 
@@ -140,34 +182,67 @@ const getRandomReviews = (params, acceptedTypes) => {
   }
 
   // defualt
-  let jsonResponse;
-  const jsonResponseReturn = [];
+  const jsonResponse = [];
 
   // testing check for if the platform param is used only send back objects with that platform
   for (let i = 0; i < limit; i += 1) {
-    if (platformParam != null && reviewArray[i].platforms.includes(platformParam)) {
-      jsonResponse = {
-        game: reviewArray[i].game,
-        rating: reviewArray[i].rating,
-        platforms: reviewArray[i].platforms,
-        review: reviewArray[i].review,
-      };
+    if (platformParam != null && i < platformArray.length) {
+      jsonResponse.push(platformArray[i]);
+    } else if (platformParam != null && i >= platformArray.length) {
+      break;
     } else {
-      jsonResponse = {
-        game: reviewArray[i].game,
-        rating: reviewArray[i].rating,
-        platforms: reviewArray[i].platforms,
-        review: reviewArray[i].review,
-      };
+      jsonResponse.push(reviewArray[i]);
     }
-    jsonResponseReturn.push(jsonResponse);
   }
-  return JSON.stringify(jsonResponseReturn);
+  return JSON.stringify(jsonResponse);
 };
 
-const getRandomReviewResponse = (request, response, acceptedTypes, httpMethod) => {
+// code by Tony Jefferson
+const addReview = (request, response, body) => {
+  // here we are assuming an error, pessimistic aren't we?
+  let responseCode = 400; // 400=bad request
+  const responseJSON = {
+    id: 'missingParams',
+    message: 'all fields are required',
+  };
+
+  // missing fields
+  if (!body.game || !body.rating || !body.platforms || !body.content) {
+    return respond(request, response, JSON.stringify(responseJSON), 'application/json', responseCode);
+  }
+
+  // we DID get a name and age
+  // if (users[body.name]) { // if the user exists
+  //   responseCode = 204;
+  //   users[body.name].age = body.age; // update
+  //   return sendJSONResponseMeta(request, response, responseCode);
+  // }
+
+  const id = uuidv4();
+
+  reviews[id] = {}; // make a new review
+  // initialize values
+  reviews[id].game = body.game;
+  reviews[id].rating = body.rating;
+  reviews[id].platforms = [body.platforms];
+  reviews[id].content = body.content;
+
+  // add the completed review to the array aswell
+  reviewArray.push(reviews[id]);
+
+  // increment to reflect new addition to array
+  amountOfReviews += 1;
+
+  responseCode = 201; // send "created" status code
+  responseJSON.id = id; // send the unique id back to the user
+  responseJSON.message = `Your Review for ${reviews[id].game} was Created Successfully`;
+  return respond(request, response, JSON.stringify(responseJSON), 'application/json', responseCode);
+};
+
+const getRandomReviewResponse = (request, response, acceptedTypes, httpMethod, params) => {
   if (httpMethod === 'GET') {
-    respond(request, response, getRandomReview(acceptedTypes), findType(acceptedTypes), 200);
+    respond(request, response,
+      getRandomReview(params, acceptedTypes), findType(acceptedTypes), 200);
   } else if (httpMethod === 'HEAD') {
     getMetaData(request, response, getRandomReview(acceptedTypes), acceptedTypes);
   }
@@ -191,4 +266,5 @@ const getRandomReviewsResponse = (request, response, acceptedTypes, httpMethod, 
 module.exports = {
   getRandomReviewResponse,
   getRandomReviewsResponse,
+  addReview,
 };

@@ -14,20 +14,21 @@
             const reviewsContainerDom = document.querySelector("#reviewsContainer");
 
             console.log(Object.keys(obj).length);
+            const object = obj.review;
             // check if there are are more than 1 joke in the obj
-            if (Object.keys(obj).length === 4){
+            if (Object.keys(obj).length === 1){
               reviewContainerDom.innerHTML = 
                 `<p>
-                    <b>Game: ${obj.game}</b>
+                    <b>Game: ${object.game}</b>
                 </p>
                 <p>
-                    <b><i>Rating: ${obj.rating}</i></b>
+                    <b><i>Rating: ${object.rating}</i></b>
                 </p>
                 <p>
-                    <b>Platforms: ${obj.platforms}</b>
+                    <b>Platforms: ${object.platforms}</b>
                 </p>
                 <p>
-                    <b>Review: ${obj.review}</b>
+                    <b>Review: ${object.content}</b>
                 </p>`;
             } else {
                 // clear the previous jokes so there is only ever 5
@@ -44,7 +45,7 @@
                         <b>Platforms: ${obj[i].platforms}</b>
                     </p>
                     <p>
-                        <b>Review: ${obj[i].review}</b>
+                        <b>Review: ${obj[i].content}</b>
                     </p>
                     <hr>`;
                 }

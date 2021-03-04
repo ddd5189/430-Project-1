@@ -20,6 +20,30 @@ const urlStruct = {
   notFound: htmlHandler.get404Response,
 };
 
+// code by Tony Jefferson
+const handlePost = (request, response, parsedUrl) => {
+  if (parsedUrl.pathname === '/add-review') {
+    const body = [];
+
+    // https://nodejs.org/api/http.html
+    request.on('error', (err) => {
+      console.dir(err);
+      response.statusCode = 400;
+      response.end();
+    });
+
+    request.on('data', (chunk) => {
+      body.push(chunk);
+    });
+
+    request.on('end', () => {
+      const bodyString = Buffer.concat(body).toString();
+      const bodyParams = query.parse(bodyString); // turn into an object with all the fields
+      responseHandler.addReview(request, response, bodyParams);
+    });
+  }
+};
+
 // this is the function that will be called every time a client request comes in
 // this time we will look at the `pathname`, and send back the appropriate page
 // note that in this course we'll be using arrow functions 100% of the time in our server-side code
@@ -31,6 +55,12 @@ const onRequest = (request, response) => {
   const { pathname } = parsedUrl;
   const params = query.parse(parsedUrl.query);
   const httpMethod = request.method;
+
+  if (request.method === 'POST') {
+    // handle POST
+    handlePost(request, response, parsedUrl);
+    return; // bail out of function
+  }
 
   if (urlStruct[pathname]) {
     urlStruct[pathname](request, response, acceptedTypes, httpMethod, params);

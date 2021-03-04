@@ -88,11 +88,18 @@
     </header>
     
     <section>
-      <h2>Just have time for one joke?</h2>
-      <p><button id="btnJoke">Show me a Joke!</button></p>
-      <div id="jokeContainer">
-        
-      </div>
+      <h3>Ajax POST Hijack Form (Ajax not yet implemented)</h3>
+      <form id="reviewForm" action="/add-review" method="POST">
+        <label for="game">Game: </label>
+        <input id="gameField" type="text" name="game" />
+        <label for="rating">rating: </label>
+        <input id="ratingField" type="number" name="rating" min="0" max="10" step="1"/>
+        <label for="platforms">Platforms: </label>
+        <input id="platformsField" type="text" name="platforms" />
+        <label for="content">Review: </label>
+        <input id="contentField" type="text" name="content" />
+        <input type="submit" value="Add Review" />
+      </form>
     </section>
   </body>
 </html>
