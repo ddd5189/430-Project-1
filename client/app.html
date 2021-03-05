@@ -7,6 +7,14 @@
         // store all the current platforms user is searching for
         let platformArray = [];
 
+        const platformHandler = (array) => {
+            let platformReturn = `${array[0]}`;
+            for (let i = 1; i < array.length; i++) {
+                platformReturn += `, ${array[i]}`;
+            }
+            return platformReturn;
+        }
+
         const handleResponse = (e) => {
             console.log("e.target =", e.target); // here, `e.target` is the `xhr` object
             console.log("e.target.response = ", e.target.response); // so that means this is a string of "joke" JSON
@@ -29,7 +37,7 @@
                     <b>Rating:</b> ${object.rating}
                 </p>
                 <p>
-                    <b>Platforms:</b> ${object.platforms}
+                    <b>Platforms:</b> ${platformHandler(object.platforms)}
                 </p>
                 <p>
                     <b>Review:</b> ${object.content}
@@ -43,10 +51,10 @@
                         <b>Game:</b> ${obj[i].game}
                     </p>
                     <p>
-                        <b><i>Rating:</b> ${obj[i].rating}
+                        <b>Rating:</b> ${obj[i].rating}
                     </p>
                     <p>
-                        <b>Platforms:</b> ${obj[i].platforms}
+                        <b>Platforms:</b> ${platformHandler(obj[i].platforms)}
                     </p>
                     <p>
                         <b>Review:</b> ${obj[i].content}
@@ -86,7 +94,11 @@
 
                 // add all the platforms selected to the endpoint
                 for (let i = 0; i < platformArray.length; i++) {
-                    platformsRequested += platformArray[i] + "&"; 
+                    if (i === platformArray.length - 1){
+                        platformsRequested += platformArray[i];
+                    } else {
+                        platformsRequested += platformArray[i] + "&platform=";
+                    }
                 }
             }
 
@@ -135,12 +147,16 @@
     <section>
         <h2>Select Which Platforms to Search for</h2>
         <form id = "platformSelect">
-            <input type="checkbox" id="gamePlatform1" onclick="addPlatform('gamePlatform1')">
-            <label for="gamePlatform1"> gamePlatform1</label><br>
-            <input type="checkbox" id="gamePlatform2" onclick="addPlatform('gamePlatform2')">
-            <label for="gamePlatform2"> gamePlatform2</label><br>
-            <input type="checkbox" id="gamePlatform3" onclick="addPlatform('gamePlatform3')">
-            <label for="gamePlatform3"> gamePlatform3</label><br>
+            <input type="checkbox" id="xbox" onclick="addPlatform('Xbox')">
+            <label for="xbox"> Xbox</label><br>
+            <input type="checkbox" id="playstation" onclick="addPlatform('Playstation')">
+            <label for="gamePlatform2"> Playstation</label><br>
+            <input type="checkbox" id="pc" onclick="addPlatform('PC')">
+            <label for="pc"> PC</label><br>
+            <input type="checkbox" id="nintendoswitch" onclick="addPlatform('Nintendo Switch')">
+            <label for="nintendoswitch"> Nintendo Switch</label><br>
+            <input type="checkbox" id="phone" onclick="addPlatform('Phone')">
+            <label for="phone"> Phone</label><br>
           </form>
     </section>
     

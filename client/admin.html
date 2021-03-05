@@ -3,6 +3,15 @@
     <title>Admin Page</title>
     <link href="/styles/default-styles.css" type="text/css" rel="stylesheet" />
     <script>
+
+      const platformHandler = (array) => {
+          let platformReturn = `${array[0]}`;
+          for (let i = 1; i < array.length; i++) {
+            platformReturn += `, ${array[i]}`;
+          }
+          return platformReturn;
+        }
+
       const handleResponse = (e) => {
           console.log("e.target =", e.target); // here, `e.target` is the `xhr` object
           console.log("e.target.response = ", e.target.response); // so that means this is a string of "joke" JSON
@@ -13,24 +22,24 @@
           const reviewsContainerDom = document.querySelector("#reviewsContainer");
 
               // clear the previous jokes so there is only ever 5
-        reviewsContainerDom.innerHTML = ``;
-        for (let i = 0; i < Object.keys(obj).length; i++) {
-          reviewsContainerDom.innerHTML +=
-            `<p>
-                <b>Game:</b> ${obj[i].game}
-              </p>
-              <p>
-                <b>Rating:</b> ${obj[i].rating}
-              </p>
-              <p>
-                <b>Platforms:</b> ${obj[i].platforms}
-              </p>
-              <p>
-                <b>Review:</b> ${obj[i].content}
-              </p>
-          <hr>`;
-        }
-      };
+          reviewsContainerDom.innerHTML = ``;
+          for (let i = 0; i < Object.keys(obj).length; i++) {
+            reviewsContainerDom.innerHTML +=
+              `<p>
+                  <b>Game:</b> ${obj[i].game}
+                </p>
+                <p>
+                  <b>Rating:</b> ${obj[i].rating}
+                </p>
+                <p>
+                  <b>Platforms:</b> ${platformHandler(obj[i].platforms)}
+                </p>
+                <p>
+                  <b>Review:</b> ${obj[i].content}
+                </p>
+            <hr>`;
+          }
+        };
 
       const downloadReview = (e) => {
           // remember that an `Event` object gets passed along every time that an event handler or listener calls a function

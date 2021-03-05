@@ -6,44 +6,54 @@ const { v4: uuidv4 } = require('uuid');
 // object of all the reviews
 const reviews = {
   id: {
-    game: 'gameName',
-    rating: 'gameRating',
+    game: "Super Mario 3D World + Bowser's Fury",
+    rating: 10,
     platforms:
       [
-        'gamePlatform1',
-        'gamePlatform2',
+        'Nintendo Switch',
       ],
-    content: 'reviewContent',
+    content: "<i>Credit to 'GameSkinny':</i> With some of the cleverest level designs and a boundless sense of joy, "
+    + "Mario 3D World + Bowser's Fury is essential playing for any Mario fan. Super Mario "
+    + "3D World might be almost eight years old, but time hasn't dulled this cat's claws. "
+    + "And while Bowser's Fury is short, it's full of so much potential for Mario's future, "
+    + "making this the most easily recommended port-and-repackage of the Switch's lifecycle so far. ",
   },
   id2: {
-    game: 'gameName2',
-    rating: 'gameRating2',
+    game: 'Hitman 3',
+    rating: 9,
     platforms:
     [
-      'gamePlatform1',
-      'gamePlatform3',
+      'Xbox',
+      'PC',
+      'Nintendo Switch',
+      'Phone',
     ],
-    content: 'reviewContent2',
+    content: "<i>Credit to 'Noisy Pixel':</i> Hitman 3 builds on the structure of its predecessors but doesn't recycle old mechanics. "
+    + 'Its creative sandbox systems encourage multiple playthroughs with possible outcomes only limited by your imagination. '
+    + "Returning fans will get the most of this narrative as it ties up a few loose ends but doesn't totally stick the landing. "
+    + "It's absolutely brilliant in execution, though, as you replay missions for different results providing the most robust "
+    + 'experience to those who spend the most time playing.',
   },
   id3: {
-    game: 'gameName3',
-    rating: 'gameRating3',
+    game: 'The Last of Us Part II',
+    rating: 7,
     platforms:
     [
-      'gamePlatform2',
-      'gamePlatform3',
+      'Playstation',
     ],
-    content: 'reviewContent3',
+    content: "<i>Credit to 'Cultured Vultures':</i> In trying to subvert expectations, The Last of Us Part II discards the best aspects of its predecessor "
+    + 'to provide a rote revenge tale that is ill-considered, ending on a note that makes everything — all the violence, '
+    + 'all the loss, all the struggle — feel utterly, hopelessly pointless.',
   },
   id4: {
-    game: 'gameName4',
-    rating: 'gameRating4',
+    game: 'Candy Crush Saga',
+    rating: 6,
     platforms:
     [
-      'gamePlatform1',
-      'gamePlatform2',
+      'Phone',
     ],
-    content: 'reviewContent4',
+    content: "<i>Credit to 'Pocket Gamer UK':</i> A challenging, surprisingly imaginative match-3 puzzler - but there's little reason to tolerate its free-to-play "
+    + 'fussiness with so much stellar competition in the field.',
   },
 };
 
@@ -66,6 +76,20 @@ const testLimitParam = (limitParam) => {
   limit = limit < 1 ? 1 : limit;
   limit = limit > amountOfReviews ? amountOfReviews : limit;
   return limit;
+};
+
+// return the proper platform params
+const platformParamParse = (platforms) => {
+  // make sure the params are stored in an array
+  let platformParamArray = [];
+  // check if there's only 1 or multiple platforms suggested
+  // and add to the array accordingly
+  if (typeof platforms === 'string') {
+    platformParamArray.push(platforms);
+  } else {
+    platformParamArray = platforms;
+  }
+  return platformParamArray;
 };
 
 // return accepted type
@@ -105,21 +129,25 @@ const getMetaData = (request, response, content, acceptedTypes) => {
 
 // function to get one joke in either json or xml
 const getRandomReview = (params, acceptedTypes) => {
-  const platformParam = params.platform;
-
   // get a random number for selecting which joke
   let reviewNumber = Math.floor(Math.random() * amountOfReviews);
 
+  const platformParam = platformParamParse(params.platform);
+  // review to send back
   let review;
 
   if (platformParam != null) {
     // array to store objects with requested platform
     const platformArray = [];
-    // add the objects from the full array if they have the platform
+    // go through each review and check its platforms array
+    // to see if any of the pased in platforms are in it
     for (let i = 0; i < reviewArray.length; i += 1) {
-      const element = reviewArray[i];
-      if (element.platforms.includes(platformParam)) {
-        platformArray.push(element);
+      for (let y = 0; y < platformParam.length; y += 1) {
+        // if the platform is included and it's not already in the array add it
+        if (reviewArray[i].platforms.includes(platformParam[y])
+            && !platformArray.includes(reviewArray[i])) {
+          platformArray.push(reviewArray[i]);
+        }
       }
     }
     // then set the review array equal to our new array
@@ -147,11 +175,8 @@ const getRandomReview = (params, acceptedTypes) => {
 
 // function to get multiple jokes
 const getRandomReviews = (params, acceptedTypes) => {
-  const limitParam = params.limit;
-  const platformParam = params.platform;
-
-  // test the limit
-  const limit = testLimitParam(limitParam);
+  const limit = testLimitParam(params.limit);
+  const platformParam = platformParamParse(params.platform);
 
   // shuffle the q array
   reviewArray = _.shuffle(reviewArray);
@@ -159,13 +184,19 @@ const getRandomReviews = (params, acceptedTypes) => {
   // create an array that only has the objects that have the requested platform
   const platformArray = [];
   if (platformParam != null) {
+    // go through each review and check its platforms array
+    // to see if any of the pased in platforms are in it
     for (let i = 0; i < reviewArray.length; i += 1) {
-      const element = reviewArray[i];
-      if (element.platforms.includes(platformParam)) {
-        platformArray.push(element);
+      for (let y = 0; y < platformParam.length; y += 1) {
+        // if the platform is included and it's not already in the array add it
+        if (reviewArray[i].platforms.includes(platformParam[y])
+            && !platformArray.includes(reviewArray[i])) {
+          platformArray.push(reviewArray[i]);
+        }
       }
     }
   }
+
   // reviewArray.platforms.includes(platformParam)
 
   // client asked for xml NEED TO UPDATE
@@ -197,7 +228,7 @@ const getRandomReviews = (params, acceptedTypes) => {
   return JSON.stringify(jsonResponse);
 };
 
-// code by Tony Jefferson
+// starter code by Tony Jefferson
 const addReview = (request, response, body) => {
   // here we are assuming an error, pessimistic aren't we?
   let responseCode = 400; // 400=bad request

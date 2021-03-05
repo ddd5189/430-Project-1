@@ -91,13 +91,23 @@
       <h3>Submit your Review!</h3>
       <form id="reviewForm" action="/add-review" method="POST">
         <label for="game">Game: </label>
-        <input id="gameField" type="text" name="game" />
-        <label for="rating">rating: </label>
-        <input id="ratingField" type="number" name="rating" min="0" max="10" step="1"/>
-        <label for="platforms">Platforms: </label>
-        <input id="platformsField" type="text" name="platforms" />
+        <input id="gameField" type="text" name="game" /><br>
+        <label for="rating">Rating: </label>
+        <input id="ratingField" type="number" name="rating" min="1" max="10" step="1"/><br>
+        <label for="platforms">Platforms: </label><br>
+        <input id="xbox" type="checkbox" name="platforms">
+        <label for="xbox"> Xbox</label><br>
+        <input id="playstation" type="checkbox" name="platforms">
+        <label for="playstation"> Playstation</label><br>
+        <input id="pc" type="checkbox" name="platforms">
+        <label for="pc"> PC</label><br>
+        <input id="nintendoswitch" type="checkbox" name="platforms">
+        <label for="nintendoswitch"> Nintendo Switch</label><br>
+        <input id="phone" type="checkbox" name="platforms">
+        <label for="phone"> Phone</label><br>
+        <input id="platformsField" type="text" name="platforms" /><br>
         <label for="content">Review: </label>
-        <input id="contentField" type="text" name="content" />
+        <input id="contentField" type="text" name="content" /><br>
         <input type="submit" value="Add Review" />
       </form>
     </section>
