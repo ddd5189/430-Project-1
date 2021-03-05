@@ -3,6 +3,10 @@
     <title>Get a Review</title>
     <link href="/styles/default-styles.css" type="text/css" rel="stylesheet" />
     <script>
+
+        // store all the current platforms user is searching for
+        let platformArray = [];
+
         const handleResponse = (e) => {
             console.log("e.target =", e.target); // here, `e.target` is the `xhr` object
             console.log("e.target.response = ", e.target.response); // so that means this is a string of "joke" JSON
@@ -19,16 +23,16 @@
             if (Object.keys(obj).length === 1){
               reviewContainerDom.innerHTML = 
                 `<p>
-                    <b>Game: ${object.game}</b>
+                    <b>Game:</b> ${object.game}
                 </p>
                 <p>
-                    <b><i>Rating: ${object.rating}</i></b>
+                    <b>Rating:</b> ${object.rating}
                 </p>
                 <p>
-                    <b>Platforms: ${object.platforms}</b>
+                    <b>Platforms:</b> ${object.platforms}
                 </p>
                 <p>
-                    <b>Review: ${object.content}</b>
+                    <b>Review:</b> ${object.content}
                 </p>`;
             } else {
                 // clear the previous jokes so there is only ever 5
@@ -36,32 +40,61 @@
                 for (let i = 0; i < 2; i++){
                     reviewsContainerDom.innerHTML += 
                     `<p>
-                        <b>Game: ${obj[i].game}</b>
+                        <b>Game:</b> ${obj[i].game}
                     </p>
                     <p>
-                        <b><i>Rating: ${obj[i].rating}</i></b>
+                        <b><i>Rating:</b> ${obj[i].rating}
                     </p>
                     <p>
-                        <b>Platforms: ${obj[i].platforms}</b>
+                        <b>Platforms:</b> ${obj[i].platforms}
                     </p>
                     <p>
-                        <b>Review: ${obj[i].content}</b>
+                        <b>Review:</b> ${obj[i].content}
                     </p>
                     <hr>`;
                 }
             }
         };
 
+        // when the user selects or deselects a platform
+        // add or remove it from the array
+        const addPlatform = (platform) => {
+            if (platformArray.includes(platform)){
+                let index = platformArray.indexOf(platform)
+                platformArray.splice(index, 1);
+            } else {
+                platformArray.push(platform);
+            }
+        }
+
         const downloadReview = (e) => {
             // remember that an `Event` object gets passed along every time that an event handler or listener calls a function
             // the `target` property of that event points at the element that sent the event, in this case a button
             console.log(`An element of id=${e.target.id} was clicked!`);
+            // Default no platforms requested
+            let platformsRequested = "";
+
+            // if there is a platform selected add to the endpoint
+            // so the server sends back the right information
+            if (platformArray.length > 0) {
+                // change the start based on what endpoint is being called
+                if (e.target.id === "btnReview") {
+                    platformsRequested = "?platform=";
+                } else {
+                    platformsRequested = "&platform=";
+                }
+
+                // add all the platforms selected to the endpoint
+                for (let i = 0; i < platformArray.length; i++) {
+                    platformsRequested += platformArray[i] + "&"; 
+                }
+            }
 
             let reviewURL = "???";
             if (e.target.id === "btnReview"){
-                reviewURL = "/review";
+                reviewURL = `/review${platformsRequested}`;
             } else {
-                reviewURL = "/reviews?limit=2";
+                reviewURL = `/reviews?limit=2${platformsRequested}`;
             }
 
             const xhr = new XMLHttpRequest();
@@ -99,10 +132,23 @@
 
       <h1>Get a Review</h1>
     </header>
+    <section>
+        <h2>Select Which Platforms to Search for</h2>
+        <form id = "platformSelect">
+            <input type="checkbox" id="gamePlatform1" onclick="addPlatform('gamePlatform1')">
+            <label for="gamePlatform1"> gamePlatform1</label><br>
+            <input type="checkbox" id="gamePlatform2" onclick="addPlatform('gamePlatform2')">
+            <label for="gamePlatform2"> gamePlatform2</label><br>
+            <input type="checkbox" id="gamePlatform3" onclick="addPlatform('gamePlatform3')">
+            <label for="gamePlatform3"> gamePlatform3</label><br>
+          </form>
+    </section>
     
     <section>
       <h2>Click to Get a Review!</h2>
+
       <p><button id="btnReview">Get a Review</button></p>
+
       <div id="reviewContainer">
         
       </div>
