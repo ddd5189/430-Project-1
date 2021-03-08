@@ -4,7 +4,7 @@ const _ = require('underscore');
 const { v4: uuidv4 } = require('uuid');
 
 // object of all the reviews
-let reviews = {
+const reviews = {
   id: {
     game: "Super Mario 3D World + Bowser's Fury",
     rating: 10,
@@ -233,7 +233,7 @@ const addReview = (request, response, body) => {
   let responseCode = 400; // 400=bad request
   const responseJSON = {
     id: 'missingParams',
-    message: 'all fields are required',
+    message: 'Please make sure you fill in all the require fields',
   };
 
   // missing fields
@@ -241,7 +241,7 @@ const addReview = (request, response, body) => {
     return respond(request, response, JSON.stringify(responseJSON), 'application/json', responseCode);
   }
 
-  let postedReview = reviews[body.id];
+  const postedReview = reviews[body.id];
   // we DID get a name and age
   if (postedReview) { // if the user exists
     responseCode = 204;

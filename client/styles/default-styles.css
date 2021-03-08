@@ -11,3 +11,30 @@ body::-webkit-scrollbar {
 #left {
     text-align: left;
 }
+
+/* tooltip code provided by w3Schools https://www.w3schools.com/css/css_tooltip.asp */
+#uuidLabel {
+    position: relative;
+    display: inline-block;
+}
+  
+#uuidLabel #tooltiptext {
+    visibility: hidden;
+    background-color: lightgray;
+    color: black;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    width: 300px;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -150px; /* Use half of the width (120/2 = 60), to center the tooltip */
+  
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+#uuidLabel:hover #tooltiptext {
+    visibility: visible;
+}

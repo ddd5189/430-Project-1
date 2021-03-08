@@ -134,21 +134,22 @@
         return false; // prevents event bubbling
       };
 
-      const changeButton = (reviewForm) => {
-        console.log("It's getting here. reviewForm: " + reviewForm)
-        let submitButton = reviewForm.querySelector('#submit');
-        console.log("submit button: " + submitButton + " it's innerHTML: " + submitButton.innerHTML)
-        submitButton.value = "Change Review";
-      };
+      // change the button value when the user enters an id to change a review
+      // const changeButton = (reviewForm) => {
+      //   console.log("It's getting here. reviewForm: " + reviewForm)
+      //   let submitButton = reviewForm.querySelector('#submit');
+      //   console.log("submit button: " + submitButton + " it's innerHTML: " + submitButton.innerHTML)
+      //   submitButton.value = "Change Review";
+      // };
 
       const init = () => {
         const reviewForm = document.querySelector('#reviewForm');
-        const uuidField = reviewForm.querySelector("#uuidField");
+        //const uuidField = reviewForm.querySelector("#uuidField");
         
         const addReview = (e) => sendPost(e, reviewForm);
         
         reviewForm.addEventListener('submit', addReview);
-        uuidField.addEventListener('onKeyUp', changeButton(reviewForm))
+        //uuidField.addEventListener('keyUp', changeButton(reviewForm));
       };
 
       window.onload = init;
@@ -190,7 +191,7 @@
 
         <label for="content">Review: </label><br>
         <textarea id="contentField" name="content" rows="5" cols="60"></textarea><br><br>
-        <label for="uuid">If you want to update a review you already submitted, put your ID here:</label><br>
+        <label id="uuidLabel" for="uuid">If you want to update a review you already submitted, put your ID here:<span id="tooltiptext">Not required for a new submition</span></label><br>
         <input id="uuidField" type="text" name="uuid" /><br><br>
         <input id="submit" type="submit" class="btn btn-outline-success" value="Add Review" />
       </form>
