@@ -4,6 +4,7 @@ const indexPage = fs.readFileSync(`${__dirname}/../client/index.html`);
 const appPage = fs.readFileSync(`${__dirname}/../client/app.html`);
 const submitPage = fs.readFileSync(`${__dirname}/../client/submit.html`);
 const adminPage = fs.readFileSync(`${__dirname}/../client/admin.html`);
+const documentationPage = fs.readFileSync(`${__dirname}/../client/documentation.html`);
 const errorPage = fs.readFileSync(`${__dirname}/../client/error.html`);
 const cssFile = fs.readFileSync(`${__dirname}/../client/styles/default-styles.css`);
 
@@ -21,6 +22,8 @@ const getSubmitResponse = (request, response) => clientResponse(request, respons
 
 const getAdminResponse = (request, response) => clientResponse(request, response, adminPage, 'text/html', 200);
 
+const getDocumentationResponse = (request, response) => clientResponse(request, response, documentationPage, 'text/html', 200);
+
 const get404Response = (request, response) => clientResponse(request, response, errorPage, 'text/html', 404);
 
 const getStylesResponse = (request, response) => clientResponse(request, response, cssFile, 'text/css', 200);
@@ -30,6 +33,7 @@ module.exports = {
   getAppResponse,
   getSubmitResponse,
   getAdminResponse,
+  getDocumentationResponse,
   get404Response,
   getStylesResponse,
 };

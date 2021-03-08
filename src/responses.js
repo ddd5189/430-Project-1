@@ -4,7 +4,7 @@ const _ = require('underscore');
 const { v4: uuidv4 } = require('uuid');
 
 // object of all the reviews
-const reviews = {
+let reviews = {
   id: {
     game: "Super Mario 3D World + Bowser's Fury",
     rating: 10,
@@ -26,7 +26,6 @@ const reviews = {
       'Xbox',
       'PC',
       'Nintendo Switch',
-      'Phone',
     ],
     content: "<i>Credit to 'Noisy Pixel':</i> Hitman 3 builds on the structure of its predecessors but doesn't recycle old mechanics. "
     + 'Its creative sandbox systems encourage multiple playthroughs with possible outcomes only limited by your imagination. '
@@ -122,10 +121,10 @@ const getMetaData = (request, response, content, acceptedTypes) => {
 };
 
 // "Meta" refers to *meta data*, in this case the HTTP headers
-// const sendJSONResponseMeta = (request, response, responseCode) => {
-//   response.writeHead(responseCode, { 'Content-Type': 'application/json' });
-//   response.end();
-// };
+const sendJSONResponseMeta = (request, response, responseCode) => {
+  response.writeHead(responseCode, { 'Content-Type': 'application/json' });
+  response.end();
+};
 
 // function to get one joke in either json or xml
 const getRandomReview = (params, acceptedTypes) => {
@@ -163,7 +162,7 @@ const getRandomReview = (params, acceptedTypes) => {
 
   // client asked for xml
   if (acceptedTypes[0] === 'text/xml') {
-    const xmlResponse = `<review><Game>${review.game}</game><Rating>${review.rating}</Rating><Platforms>${review.platforms}</Platforms><Review>${review.content}</Review></review>`;
+    const xmlResponse = `<review><Game>${review.game}</Game><Rating>${review.rating}</Rating><Platforms>${review.platforms}</Platforms><Review>${review.content}</Review></review>`;
     return xmlResponse;
   }
   // defualt
@@ -204,9 +203,9 @@ const getRandomReviews = (params, acceptedTypes) => {
     let xmlResponse = '<reviews>';
 
     for (let i = 0; i < limit; i += 1) {
-      xmlResponse = `${xmlResponse}<review><Game>${reviewArray[i].game}
-                    </Game><Rating>${reviewArray[i].rating}</Rating><Platforms>${reviewArray[i].platforms}</Platforms>
-                    <Review>${reviewArray[i].review}</Review></review>`;
+      xmlResponse = `${xmlResponse}<review><Game>${reviewArray[i].game}</Game>
+      <Rating>${reviewArray[i].rating}</Rating><Platforms>${reviewArray[i].platforms}</Platforms>
+      <Review>${reviewArray[i].content}</Review></review>`;
     }
     xmlResponse = `${xmlResponse} </reviews>`;
     return xmlResponse;
@@ -242,12 +241,18 @@ const addReview = (request, response, body) => {
     return respond(request, response, JSON.stringify(responseJSON), 'application/json', responseCode);
   }
 
+  let postedReview = reviews[body.id];
   // we DID get a name and age
-  // if (users[body.name]) { // if the user exists
-  //   responseCode = 204;
-  //   users[body.name].age = body.age; // update
-  //   return sendJSONResponseMeta(request, response, responseCode);
-  // }
+  if (postedReview) { // if the user exists
+    responseCode = 204;
+    // initialize values
+    postedReview.game = body.game;
+    postedReview.rating = body.rating;
+    // distinguish between getting 1 or multiple platforms
+    if (typeof body.platforms === 'string') { postedReview.platforms = [body.platforms]; } else { postedReview.platforms = body.platforms; }
+    postedReview.content = body.content;
+    return sendJSONResponseMeta(request, response, responseCode);
+  }
 
   const id = uuidv4();
 
@@ -255,7 +260,8 @@ const addReview = (request, response, body) => {
   // initialize values
   reviews[id].game = body.game;
   reviews[id].rating = body.rating;
-  reviews[id].platforms = [body.platforms];
+  // distinguish between getting 1 or multiple platforms
+  if (typeof body.platforms === 'string') { reviews[id].platforms = [body.platforms]; } else { reviews[id].platforms = body.platforms; }
   reviews[id].content = body.content;
 
   // add the completed review to the array aswell
@@ -265,7 +271,7 @@ const addReview = (request, response, body) => {
   amountOfReviews += 1;
 
   responseCode = 201; // send "created" status code
-  responseJSON.id = id; // send the unique id back to the user
+  responseJSON.id = `Use this ID to update your review in the future<br>ID: ${id}`; // send the unique id back to the user
   responseJSON.message = `Your Review for ${reviews[id].game} was Created Successfully`;
   return respond(request, response, JSON.stringify(responseJSON), 'application/json', responseCode);
 };

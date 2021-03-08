@@ -1,4 +1,13 @@
 *{
-    font-family: sans-serif;
-    background-color: antiquewhite;
+    padding: 5px;
+}
+
+/* code from w3Schools https://www.w3schools.com/howto/howto_css_hide_scrollbars.asp */
+/* remove the scrollbar but keep the functionality */
+body::-webkit-scrollbar {
+    display: none;
+}
+
+#left {
+    text-align: left;
 }

@@ -2,6 +2,7 @@
 const http = require('http');
 const url = require('url');
 const query = require('querystring');
+//const bootstrap = require('bootstrap')
 const htmlHandler = require('./htmlResponses.js');
 const responseHandler = require('./responses.js');
 
@@ -14,6 +15,7 @@ const urlStruct = {
   '/app': htmlHandler.getAppResponse,
   '/submit': htmlHandler.getSubmitResponse,
   '/admin': htmlHandler.getAdminResponse,
+  '/documentation': htmlHandler.getDocumentationResponse,
   '/review': responseHandler.getRandomReviewResponse,
   '/reviews': responseHandler.getRandomReviewsResponse,
   '/styles/default-styles.css': htmlHandler.getStylesResponse,
@@ -43,6 +45,7 @@ const handlePost = (request, response, parsedUrl) => {
     });
   }
 };
+
 
 // this is the function that will be called every time a client request comes in
 // this time we will look at the `pathname`, and send back the appropriate page

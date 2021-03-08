@@ -1,9 +1,9 @@
 <html>
   <head>
     <title>Get a Review</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link href="/styles/default-styles.css" type="text/css" rel="stylesheet" />
     <script>
-
         // store all the current platforms user is searching for
         let platformArray = [];
 
@@ -31,16 +31,16 @@
             if (Object.keys(obj).length === 1){
               reviewContainerDom.innerHTML = 
                 `<p>
-                    <b>Game:</b> ${object.game}
+                    <b>Game:</b>${object.game}
                 </p>
                 <p>
-                    <b>Rating:</b> ${object.rating}
+                    <b>Rating:</b>${object.rating}
                 </p>
                 <p>
-                    <b>Platforms:</b> ${platformHandler(object.platforms)}
+                    <b>Platforms:</b>${platformHandler(object.platforms)}
                 </p>
                 <p>
-                    <b>Review:</b> ${object.content}
+                    <b>Review:</b>${object.content}
                 </p>`;
             } else {
                 // clear the previous jokes so there is only ever 5
@@ -48,16 +48,16 @@
                 for (let i = 0; i < 2; i++){
                     reviewsContainerDom.innerHTML += 
                     `<p>
-                        <b>Game:</b> ${obj[i].game}
+                        <b>Game:</b>${obj[i].game}
                     </p>
                     <p>
-                        <b>Rating:</b> ${obj[i].rating}
+                        <b>Rating:</b>${obj[i].rating}
                     </p>
                     <p>
-                        <b>Platforms:</b> ${platformHandler(obj[i].platforms)}
+                        <b>Platforms:</b>${platformHandler(obj[i].platforms)}
                     </p>
                     <p>
-                        <b>Review:</b> ${obj[i].content}
+                        <b>Review:</b>${obj[i].content}
                     </p>
                     <hr>`;
                 }
@@ -125,7 +125,13 @@
             // An Event *Listener*
             document.querySelector("#btnReview").addEventListener("click", downloadReview);
             document.querySelector("#btnReviews").addEventListener("click", downloadReview);
-      
+
+            // document.querySelector("#xbox").addEventListener("click", addPlatform('Xbox'));
+            // document.querySelector("#playstation").addEventListener("click", addPlatform('Playstation'));
+            // document.querySelector("#pc").addEventListener("click", addPlatform('PC'));
+            // document.querySelector("#nintendoswitch").addEventListener("click", addPlatform('Nintendo Switch'));
+            // document.querySelector("#phone").addEventListener("click", addPlatform('Phone'));
+
             // **Actually, event handlers and listeners are NOT exactly the same in all use cases - what ARE the differences?**
         };
       
@@ -134,49 +140,59 @@
     </script>
   </head>
   <body>
-    <header>
-        <nav>
-            <a href = "/">Home</a>
-            <span>App</span>
-            <a href = "submit">Submit</a>
-            <a href = "admin">Admin</a>
+    <header class="container-fluid text-center">
+        <h1>What to Play?</h1>
+        <nav class="nav nav-pills flex-column flex-sm-row">
+            <a class="flex-sm-fill text-sm-center nav-link" href = "/">Home</a>
+            <a class="flex-sm-fill text-sm-center nav-link active" href="">Get a Review</a>
+            <a class="flex-sm-fill text-sm-center nav-link" href = "submit">Submit</a>
+            <a class="flex-sm-fill text-sm-center nav-link" href = "admin">Admin</a>
         </nav>
-
-      <h1>Get a Review</h1>
+        <h2>Get a Review</h2>
     </header>
-    <section>
-        <h2>Select Which Platforms to Search for</h2>
-        <form id = "platformSelect">
-            <input type="checkbox" id="xbox" onclick="addPlatform('Xbox')">
-            <label for="xbox"> Xbox</label><br>
-            <input type="checkbox" id="playstation" onclick="addPlatform('Playstation')">
-            <label for="gamePlatform2"> Playstation</label><br>
-            <input type="checkbox" id="pc" onclick="addPlatform('PC')">
-            <label for="pc"> PC</label><br>
-            <input type="checkbox" id="nintendoswitch" onclick="addPlatform('Nintendo Switch')">
-            <label for="nintendoswitch"> Nintendo Switch</label><br>
-            <input type="checkbox" id="phone" onclick="addPlatform('Phone')">
-            <label for="phone"> Phone</label><br>
-          </form>
-    </section>
-    
-    <section>
-      <h2>Click to Get a Review!</h2>
 
-      <p><button id="btnReview">Get a Review</button></p>
 
-      <div id="reviewContainer">
-        
+    <div class="container-fluid">
+        <div class="row">
+          <div class="col-3">
+            <section>
+                <h4>Platforms:</h4>
+                <form id = "platformSelect">
+                    <input type="checkbox" id="xbox" onclick="addPlatform('Xbox')">
+                    <label for="xbox"> Xbox</label><br>
+                    <input type="checkbox" id="playstation" onclick="addPlatform('Playstation')">
+                    <label for="gamePlatform2"> Playstation</label><br>
+                    <input type="checkbox" id="pc" onclick="addPlatform('PC')">
+                    <label for="pc"> PC</label><br>
+                    <input type="checkbox" id="nintendoswitch" onclick="addPlatform('Nintendo Switch')">
+                    <label for="nintendoswitch"> Nintendo Switch</label><br>
+                    <input type="checkbox" id="phone" onclick="addPlatform('Phone')">
+                    <label for="phone"> Phone</label><br>
+                  </form>
+            </section>
+          </div>
+          <div class="col">
+            <section class ="left">
+                <h4>Click to Get a Review!</h4>
+          
+                <p><button id="btnReview" class="btn btn-outline-info">Get a Review</button></p>
+          
+                <div id="reviewContainer">
+                  
+                </div>
+            </section>
+            <section class ="left">
+                <h4>How about 2 Reviews?</h4>
+                <p><button id="btnReviews" class="btn btn-outline-info">Get 2 Reviews</button></p>
+                <div id="reviewsContainer">
+                  
+                </div>
+            </section>
+          </div>
+        </div>
       </div>
-    </section>
-    
-    <section>
-      <h2>How about 2 Reviews?</h2>
-      <p><button id="btnReviews">Get 2 Reviews</button></p>
-      <div id="reviewsContainer">
-        
-      </div>
-    </section>
-    
+      <footer class="container-fluid text-center pt-2" id="footer">
+        <p>&copy; Drew Donovan 2021</p>
+      </footer>    
   </body>
 </html>
