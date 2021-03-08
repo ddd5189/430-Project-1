@@ -27,9 +27,6 @@
           for (let i = 0; i < Object.keys(obj).length; i++) {
             reviewsContainerDom.innerHTML +=
                `<p>
-                  <b>ID:</b> ${obj[i]}
-                </p>
-                <p>
                   <b>Game:</b> ${obj[i].game}
                 </p>
                 <p>
@@ -60,17 +57,6 @@
           xhr.send();
       };
     
-      // const init = () => {
-      //     // An Event *Handler*
-      //     // document.querySelector("#btnJoke").onclick = downloadJoke; // same as below, less typing, use which ever version you prefer
-    
-      //     // An Event *Listener*
-      //     document.querySelector("#btnReview").addEventListener("click", downloadReview);
-
-    
-      //     // **Actually, event handlers and listeners are NOT exactly the same in all use cases - what ARE the differences?**
-      // };
-    
     window.onload = downloadReview;
    
   </script>
@@ -84,7 +70,7 @@
             <a class="flex-sm-fill text-sm-center nav-link" href = "submit">Submit</a>
             <a class="flex-sm-fill text-sm-center nav-link active" href="">Admin</a>
         </nav>
-        <h2>Admin:<br>Here's all the Jokes on the Server</h2>
+        <h2>Admin:<br>Here's all the Reviews on the Server</h2>
     </header>
 
     <div id="left" class="mx-auto" style="width: 600px;">
