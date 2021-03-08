@@ -2,6 +2,7 @@
   <head>
     <title>Get a Review</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/" /> -->
     <link href="/styles/default-styles.css" type="text/css" rel="stylesheet" />
     <script>
         // store all the current platforms user is searching for
@@ -13,6 +14,25 @@
                 platformReturn += `, ${array[i]}`;
             }
             return platformReturn;
+        }
+
+        // DRY - handle the inner html with the response
+        const innerhtmlHandler = (obj) => {
+            let respone =  
+                `<p>
+                    <b>Game:</b>${obj.game}
+                </p>
+                <p>
+                    <b>Rating:</b>${obj.rating}
+                </p>
+                <p>
+                    <b>Platforms:</b>${platformHandler(obj.platforms)}
+                </p>
+                <p>
+                    <b>Review:</b>${obj.content}
+                </p>`;
+
+            return respone;
         }
 
         const handleResponse = (e) => {
@@ -27,39 +47,21 @@
 
             console.log(Object.keys(obj).length);
             const object = obj.review;
+            console.log(typeof obj[0]);
             // check if there are are more than 1 joke in the obj
-            if (Object.keys(obj).length === 1){
-              reviewContainerDom.innerHTML = 
-                `<p>
-                    <b>Game:</b>${object.game}
-                </p>
-                <p>
-                    <b>Rating:</b>${object.rating}
-                </p>
-                <p>
-                    <b>Platforms:</b>${platformHandler(object.platforms)}
-                </p>
-                <p>
-                    <b>Review:</b>${object.content}
-                </p>`;
+            // and if the obj comes back in an array
+            // which signifies that the user asked for 2 reviews
+            // but the server only returned 1
+            if (Object.keys(obj).length === 1 && !obj[0]){
+              reviewContainerDom.innerHTML = innerhtmlHandler(object);
+
+            } else if (Object.keys(obj).length === 1 && obj[0]) {
+                reviewsContainerDom.innerHTML = innerhtmlHandler(obj[0]);
             } else {
                 // clear the previous jokes so there is only ever 5
                 reviewsContainerDom.innerHTML = ``;
                 for (let i = 0; i < 2; i++){
-                    reviewsContainerDom.innerHTML += 
-                    `<p>
-                        <b>Game:</b>${obj[i].game}
-                    </p>
-                    <p>
-                        <b>Rating:</b>${obj[i].rating}
-                    </p>
-                    <p>
-                        <b>Platforms:</b>${platformHandler(obj[i].platforms)}
-                    </p>
-                    <p>
-                        <b>Review:</b>${obj[i].content}
-                    </p>
-                    <hr>`;
+                    reviewsContainerDom.innerHTML += `${innerhtmlHandler(obj[i])}<hr>`;
                 }
             }
         };

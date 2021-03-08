@@ -271,8 +271,8 @@ const addReview = (request, response, body) => {
   amountOfReviews += 1;
 
   responseCode = 201; // send "created" status code
-  responseJSON.id = `Use this ID to update your review in the future<br>ID: ${id}`; // send the unique id back to the user
-  responseJSON.message = `Your Review for ${reviews[id].game} was Created Successfully`;
+  responseJSON.message = `Your Review for<b>${reviews[id].game}</b>was Created Successfully`;
+  responseJSON.id = `Use this ID to update your review in the future<br>ID:<b>${id}</b>`; // send the unique id back to the user
   return respond(request, response, JSON.stringify(responseJSON), 'application/json', responseCode);
 };
 
