@@ -1,206 +1,205 @@
 <html>
-  <head>
-    <title>Submit a Review</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link href="/styles/default-styles.css" type="text/css" rel="stylesheet" />
-    <script>
-      // base code provided by Tony Jefferson
-      "use strict"; // because I got rid of client-side babel
-      const parseJSON = (xhr, content) => {
-        if(xhr.response && xhr.getResponseHeader('Content-Type') === 'application/json'){
-          const obj = JSON.parse(xhr.response);
-          console.dir(obj);
-          
-          if(obj.message){
-            content.innerHTML += `<p>${obj.message}<br><br>${obj.id}</p>`;
-          }
+
+<head>
+  <title>Submit a Review</title>
+  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"> -->
+  <link href="/default-styles.css" type="text/css" rel="stylesheet" />
+  <link href="/bootstrap.css" type="text/css" rel="stylesheet" />
+  <script>
+    // base code provided by Tony Jefferson
+    "use strict"; // because I got rid of client-side babel
+    const parseJSON = (xhr, content) => {
+      if (xhr.response && xhr.getResponseHeader('Content-Type') === 'application/json') {
+        const obj = JSON.parse(xhr.response);
+
+        if (obj.message) {
+          content.innerHTML += `<p>${obj.message}<br><br>${obj.id}</p>`;
         }
-      };
+      }
+    };
 
-      const handlePlatforms = (platformArray) => {
-        let platformResponse = "&platforms=";
-        let tempArray = [];
+    // create the string for passing the platfrom param
+    const handlePlatforms = (platformArray) => {
+      let platformResponse = "&platforms=";
+      let tempArray = [];
 
-        platformArray.forEach(element => {
-          if (element.checked){
-            tempArray.push(element.value);
-          }
-        });
-
-        for (let i = 0; i < tempArray.length; i++) {
-          const element = tempArray[i];
-          if (i !== tempArray.length-1){
-            platformResponse += `${element}&platforms=`;
-          } else {
-            platformResponse += `${element}`;
-          }
+      platformArray.forEach(element => {
+        if (element.checked) {
+          tempArray.push(element.value);
         }
+      });
 
-        console.log(platformResponse)
-        return platformResponse;
-      };
-
-      const handleResponse = (xhr) => {
-        const content = document.querySelector('#content');
-        
-        switch(xhr.status){
-          case 200:
-            content.innerHTML = '<b>Success!</b>';
-            break;
-          case 201:
-            content.innerHTML = '<b>Created!</b>';
-            break;
-          case 204:
-            content.innerHTML = '<b>Your Review was Updated!</b>';
-            break;
-          case 400:
-            content.innerHTML = '<b>Bad Request!</b>';
-            break;
-          default:
-            content.innerHTML = '<b>Error code not implemented by client</b>';
+      for (let i = 0; i < tempArray.length; i++) {
+        const element = tempArray[i];
+        if (i !== tempArray.length - 1) {
+          platformResponse += `${element}&platforms=`;
+        } else {
+          platformResponse += `${element}`;
         }
-        
-        parseJSON(xhr,content);
-      };
+      }
+      return platformResponse;
+    };
 
-      const sendPost = (e, reviewForm) => {
-        e.preventDefault();
-        
-        let platformArray = [];
+    // tell the user what happened to their content
+    const handleResponse = (xhr) => {
+      const content = document.querySelector('#content');
 
-        const reviewAction = reviewForm.getAttribute("action");
-        const reviewMethod = reviewForm.getAttribute("method");
-        
-        const gameField = reviewForm.querySelector("#gameField");
-        const ratingField = reviewForm.querySelector("#ratingField");
-        const platformField = reviewForm.querySelector("#platformField");
+      switch (xhr.status) {
+        case 201:
+          content.innerHTML = '<b>Created!</b>';
+          break;
+        case 204:
+          content.innerHTML = '<b>Your Review was Updated!</b>';
+          break;
+        case 400:
+          content.innerHTML = '<b>Bad Request!</b>';
+          break;
+        default:
+          content.innerHTML = '<b>Error code not implemented by client</b>';
+      }
 
-        const uuidField = reviewForm.querySelector("#uuidField");
+      parseJSON(xhr, content);
+    };
+
+    // Send data user inputs to the server
+    const sendPost = (e, reviewForm) => {
+      e.preventDefault();
+
+      let platformArray = [];
+
+      const reviewAction = reviewForm.getAttribute("action");
+      const reviewMethod = reviewForm.getAttribute("method");
+
+      // required fields
+      const gameField = reviewForm.querySelector("#gameField");
+      const ratingField = reviewForm.querySelector("#ratingField");
+      const platformField = reviewForm.querySelector("#platformField");
+      // optional if the user is updating their review
+      const uuidField = reviewForm.querySelector("#uuidField");
+
+      // all the platform checkboxes
+      // add them to the array, it will check if they are pressed or not
+      const xboxField = reviewForm.querySelector("#xbox");
+      platformArray.push(xboxField);
+      const playstationField = reviewForm.querySelector("#playstation");
+      platformArray.push(playstationField);
+      const pcField = reviewForm.querySelector("#pc");
+      platformArray.push(pcField);
+      const nSwitchField = reviewForm.querySelector("#nintendoswitch");
+      platformArray.push(nSwitchField);
+      const phoneField = reviewForm.querySelector("#phone");
+      platformArray.push(phoneField);
+
+      //handlePlatforms(platformArray);
+
+      const contentField = reviewForm.querySelector("#contentField");
 
 
-        const xboxField = reviewForm.querySelector("#xbox");
-        platformArray.push(xboxField);
-        const playstationField = reviewForm.querySelector("#playstation");
-        platformArray.push(playstationField);
-        const pcField = reviewForm.querySelector("#pc");
-        platformArray.push(pcField);
-        const nSwitchField = reviewForm.querySelector("#nintendoswitch");
-        platformArray.push(nSwitchField);
-        const phoneField = reviewForm.querySelector("#phone");
-        platformArray.push(phoneField);
+      const xhr = new XMLHttpRequest();
+      xhr.open(reviewMethod, reviewAction); // NEW - in the past we've been using "GET"
 
-        //handlePlatforms(platformArray);
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      // what is "x-www-form-urlencoded"
+      // for GET we already saw it - ex. "/unauthorized?loggedIn=yes&valid=true"
+      // everything after the question mark is urlencoded
+      // multiple key=value pairs are separated by the &
+      // HTML forms also encode their values this way
+      // in the form below the values are encoded as "name=someValue&age=someValue"
+      // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
 
-        const contentField = reviewForm.querySelector("#contentField");
+      xhr.onload = () => handleResponse(xhr);
+      // &platforms=${platformField.value}
+      let formData = `game=${gameField.value}&rating=${ratingField.value}${handlePlatforms(platformArray)}&content=${contentField.value}`;
+      if (uuidField.value) {
+        formData += `&id=${uuidField.value}`
+      }
+      xhr.send(formData); // NEW - in the past we haven't been sending anything here because ...
+      // ... our data has always been encoded in the URL
+      /// ... instead of being in a separate file as it is now
+
+      return false; // prevents event bubbling
+    };
+
+    // change the button value when the user enters an id to change a review
+    const changeButton = () => {
+      const submit = reviewForm.querySelector("#submit");
+      submit.value = "Change Review";
+    };
+
+    const init = () => {
+      const reviewForm = document.querySelector('#reviewForm');
+      const uuidField = reviewForm.querySelector("#uuidField");
+      const submit = reviewForm.querySelector("#submit");
+
+      const addReview = (e) => sendPost(e, reviewForm);
+
+      reviewForm.addEventListener('submit', addReview);
+      // if the user clicks the uuidField thinking they are updating their
+      // review change the text to say "Change Review"
+      uuidField.addEventListener('click', changeButton);
+    };
+
+    window.onload = init;
+
+  </script>
+</head>
+
+<body class="container-fluid text-center">
+  <div id="page-container">
+    <div id="content-wrap">
+      <header>
+        <h1>What to Play?</h1>
+        <nav class="nav nav-pills flex-column flex-sm-row">
+          <a class="flex-sm-fill text-sm-center nav-link" href="/">Home</a>
+          <a class="flex-sm-fill text-sm-center nav-link" href="app">Get a Review</a>
+          <a class="flex-sm-fill text-sm-center nav-link active" href="">Submit</a>
+          <a class="flex-sm-fill text-sm-center nav-link" href="admin">Admin</a>
+        </nav>
+
+      </header>
+
+      <section class="container-fluid text-center">
+        <h2>Submit your own Review!</h2>
+      </section>
+
+      <section>
+        <form id="reviewForm" action="/add-review" method="POST">
+          <label for="game">Game Title: </label><br>
+          <input id="gameField" type="text" name="game" /><br>
+          <label for="rating">Rating (1-10): </label><br>
+          <input id="ratingField" type="number" name="rating" min="1" max="10" step="1" /><br>
+
+          <label for="platforms">Platforms<br>(Select all that Apply):</label><br>
+          <div id="left" class="mx-auto" style="width: 200px;">
+            <input id="xbox" type="checkbox" value="Xbox">
+            <label for="xbox"> Xbox</label><br>
+            <input id="playstation" type="checkbox" value="Playstation">
+            <label for="playstation"> Playstation</label><br>
+            <input id="pc" type="checkbox" value="PC">
+            <label for="pc"> PC</label><br>
+            <input id="nintendoswitch" type="checkbox" value="Nintendo Switch">
+            <label for="nintendoswitch"> Nintendo Switch</label><br>
+            <input id="phone" type="checkbox" value="Phone">
+            <label for="phone"> Phone</label><br>
+          </div>
 
 
-        const xhr = new XMLHttpRequest();
-        xhr.open(reviewMethod,reviewAction); // NEW - in the past we've been using "GET"
-        
-        xhr.setRequestHeader('Accept','application/json');
-        xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-        // what is "x-www-form-urlencoded"
-        // for GET we already saw it - ex. "/unauthorized?loggedIn=yes&valid=true"
-        // everything after the question mark is urlencoded
-        // multiple key=value pairs are separated by the &
-        // HTML forms also encode their values this way
-        // in the form below the values are encoded as "name=someValue&age=someValue"
-        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
-        
-        xhr.onload = () => handleResponse(xhr);
-        // &platforms=${platformField.value}
-        let formData = `game=${gameField.value}&rating=${ratingField.value}${handlePlatforms(platformArray)}&content=${contentField.value}`;
-        console.log(uuidField.value);
-        if (uuidField.value){
-          formData += `&id=${uuidField.value}`
-        }
-        console.log(formData);
-        xhr.send(formData); // NEW - in the past we haven't been sending anything here because ...
-        // ... our data has always been encoded in the URL
-        /// ... instead of being in a separate file as it is now
-        
-        /*
-          Things to try:
-          1) Add new users, we should see "201 Created" status code
-          - look in the Request tab of the debugger to see the form data
-          - Recall that every time the server reboots we lose our data because `users` in jsonResponses.js is re-initialized 
-          2) Update a new user (i.e. send the same name) again - we'll see "204 No Content"
-          3) Leave off name or age and get back a "400 Bad Request"
-          4) In the debugger, you can see that the Network request is being made via XHR
-          5) Disable the XHR and you can see the Network request is being made via the form (and we're getting taken to a new page)
-          6) Re-enable the XHR and get rid of the `action` and `method` of the form and make the XHR work
-        */
-        
-        return false; // prevents event bubbling
-      };
+          <label for="content">Review: </label><br>
+          <textarea id="contentField" name="content" rows="5" cols="60"></textarea><br><br>
+          <label id="tooltip" for="uuid">If you want to update a review you already submitted, put your ID here:<span
+              id="tooltiptext">Not required for a new submission</span></label><br>
+          <input id="uuidField" type="text" name="uuid" /><br><br>
+          <input id="submit" type="submit" class="btn btn-outline-success" value="Add Review" />
+        </form>
+      </section>
+      <section id="content">
+      </section>
+      <footer class="container-fluid text-center pt-2" id="footer">
+        <span>&copy; Drew Donovan 2021</span>
+      </footer>
+    </div>
+  </div>
+</body>
 
-      // change the button value when the user enters an id to change a review
-      // const changeButton = (reviewForm) => {
-      //   console.log("It's getting here. reviewForm: " + reviewForm)
-      //   let submitButton = reviewForm.querySelector('#submit');
-      //   console.log("submit button: " + submitButton + " it's innerHTML: " + submitButton.innerHTML)
-      //   submitButton.value = "Change Review";
-      // };
-
-      const init = () => {
-        const reviewForm = document.querySelector('#reviewForm');
-        //const uuidField = reviewForm.querySelector("#uuidField");
-        
-        const addReview = (e) => sendPost(e, reviewForm);
-        
-        reviewForm.addEventListener('submit', addReview);
-        //uuidField.addEventListener('keyUp', changeButton(reviewForm));
-      };
-
-      window.onload = init;
-
-    </script>
-  </head>
-  <body class="container-fluid text-center">
-    <header>
-      <h1>What to Play?</h1>
-      <nav class="nav nav-pills flex-column flex-sm-row">
-        <a class="flex-sm-fill text-sm-center nav-link" href = "/">Home</a>
-        <a class="flex-sm-fill text-sm-center nav-link" href = "app">Get a Review</a>
-        <a class="flex-sm-fill text-sm-center nav-link active" href="">Submit</a>
-        <a class="flex-sm-fill text-sm-center nav-link" href = "admin">Admin</a>
-      </nav>
-      <h2>Submit your own Review!</h2>
-    </header>
-    
-    <section>
-      <form id="reviewForm" action="/add-review" method="POST">
-        <label for="game">Game Title: </label><br>
-        <input id="gameField" type="text" name="game" /><br>
-        <label for="rating">Rating (1-10): </label><br>
-        <input id="ratingField" type="number" name="rating" min="1" max="10" step="1"/><br>
-
-        <label for="platforms">Platforms<br>(Select all that Apply):</label><br>
-        <div id="left" class="mx-auto" style="width: 200px;">
-          <input id="xbox" type="checkbox" value="Xbox">
-          <label for="xbox"> Xbox</label><br>
-          <input id="playstation" type="checkbox" value="Playstation">
-          <label for="playstation"> Playstation</label><br>
-          <input id="pc" type="checkbox" value="PC">
-          <label for="pc"> PC</label><br>
-          <input id="nintendoswitch" type="checkbox" value="Nintendo Switch">
-          <label for="nintendoswitch"> Nintendo Switch</label><br>
-          <input id="phone" type="checkbox" value="Phone">
-          <label for="phone"> Phone</label><br>
-        </div>
-  
-
-        <label for="content">Review: </label><br>
-        <textarea id="contentField" name="content" rows="5" cols="60"></textarea><br><br>
-        <label id="uuidLabel" for="uuid">If you want to update a review you already submitted, put your ID here:<span id="tooltiptext">Not required for a new submition</span></label><br>
-        <input id="uuidField" type="text" name="uuid" /><br><br>
-        <input id="submit" type="submit" class="btn btn-outline-success" value="Add Review" />
-      </form>
-    </section>
-    <section id="content">
-    </section>
-    <footer class="container-fluid text-center pt-2" id="footer">
-      <p>&copy; Drew Donovan 2021</p>
-    </footer>
-  </body>
 </html>

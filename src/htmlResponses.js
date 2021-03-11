@@ -7,6 +7,9 @@ const adminPage = fs.readFileSync(`${__dirname}/../client/admin.html`);
 const documentationPage = fs.readFileSync(`${__dirname}/../client/documentation.html`);
 const errorPage = fs.readFileSync(`${__dirname}/../client/error.html`);
 const cssFile = fs.readFileSync(`${__dirname}/../client/styles/default-styles.css`);
+const bootstrapFile = fs.readFileSync(`${__dirname}/../node_modules/bootstrap/dist/css/bootstrap.min.css`);
+const bootstrapMapFile = fs.readFileSync(`${__dirname}/../node_modules/bootstrap/dist/css/bootstrap.min.css.map`);
+const imgFile = fs.readFileSync(`${__dirname}/../client/media/Proj1Img.jpg`);
 
 const clientResponse = (request, response, content, type, statusCode) => {
   response.writeHead(statusCode, { 'Content-Type': type });
@@ -28,6 +31,12 @@ const get404Response = (request, response) => clientResponse(request, response, 
 
 const getStylesResponse = (request, response) => clientResponse(request, response, cssFile, 'text/css', 200);
 
+const getBootstrapResponse = (request, response) => clientResponse(request, response, bootstrapFile, 'text/css', 200);
+
+const getBootstrapMapResponse = (request, response) => clientResponse(request, response, bootstrapMapFile, 'text/css', 200);
+
+const getImgResponse = (request, response) => clientResponse(request, response, imgFile, 'image/jpg', 200);
+
 module.exports = {
   getIndexResponse,
   getAppResponse,
@@ -36,4 +45,7 @@ module.exports = {
   getDocumentationResponse,
   get404Response,
   getStylesResponse,
+  getBootstrapResponse,
+  getBootstrapMapResponse,
+  getImgResponse,
 };

@@ -3,7 +3,7 @@ const _ = require('underscore');
 // adding uuid for unique ids
 const { v4: uuidv4 } = require('uuid');
 
-// object of all the reviews
+// object of base the reviews
 const reviews = {
   id: {
     game: "Super Mario 3D World + Bowser's Fury",
@@ -65,7 +65,83 @@ let reviewArray = [
   reviews.id4,
 ];
 
+// return accepted type
+const findType = (acceptedTypes) => {
+  // send back json if acceotedTypes doesn't exist
+  if (acceptedTypes) {
+    if (acceptedTypes.includes('text/xml')) return 'text/xml';
+  }
+  return 'application/json';
+};
+
+// Source: https://stackoverflow.com/questions/2219526/how-many-bytes-in-a-javascript-string/29955838
+// Refactored to an arrow function by ACJ
+const getBinarySize = (string) => Buffer.byteLength(string, 'utf8');
+
+// respond function
+const respond = (request, response, content, type, statusCode) => {
+  response.writeHead(statusCode, { 'Content-type': type });
+  response.write(content);
+  response.end();
+};
+
+// get meta data when the server receives a head request or 204
+const getMetaData = (request, response, responseCode, acceptedTypes, content) => {
+  const type = findType(acceptedTypes);
+  // check if there is content being sent back
+  if (content) {
+    const headers = {
+      'Content-type': type,
+      'Content-length': `${getBinarySize(content)}`,
+    };
+    response.writeHead(responseCode, headers);
+  } else {
+    response.writeHead(responseCode);
+  }
+  response.end();
+};
+
+// get a random number with a limit
+const randomNumber = (number) => Math.floor(Math.random() * number);
+
+// check the requested platforms against the reviewArray
+// to get all the reviews that have the platforms
+const platformCheck = (platformParam, platformArray) => {
+  // go through each review and check its platforms array
+  // to see if any of the pased in platforms are in it
+  for (let i = 0; i < reviewArray.length; i += 1) {
+    for (let y = 0; y < platformParam.length; y += 1) {
+      // if the platform is included and it's not already in the array add it
+      if (reviewArray[i].platforms.includes(platformParam[y])
+            && !platformArray.includes(reviewArray[i])) {
+        platformArray.push(reviewArray[i]);
+      }
+    }
+  }
+};
+
+// xml response format
+const xmlRes = (rev) => `<review><Game>${rev.game}</Game><Rating>${rev.rating}</Rating><Platforms>${rev.platforms}</Platforms><Review>${rev.content}</Review></review>`;
+
+// const populateReview = (body) => {
+//   let postedRev = {
+//     game: {},
+//     rating: {},
+//     platforms: {},
+//     content: {},
+//   };
+
+//   postedRev.game = body.game;
+//   postedRev.rating = body.rating;
+//   // distinguish between getting 1 or multiple platforms
+//   if (typeof body.platforms === 'string')
+// { postedRev.platforms = [body.platforms]; } else { postedRev.platforms = body.platforms; }
+//   postedRev.content = body.content;
+//   return postedRev;
+// };
+
 // amount of reviews
+
 let amountOfReviews = reviewArray.length;
 
 // validate the limit param
@@ -91,68 +167,24 @@ const platformParamParse = (platforms) => {
   return platformParamArray;
 };
 
-// return accepted type
-const findType = (acceptedTypes) => {
-  if (acceptedTypes[0] === 'text/xml') return 'text/xml';
-  return 'application/json';
-};
-
-// ALWAYS GIVE CREDIT - in your code comments and documentation
-// Source: https://stackoverflow.com/questions/2219526/how-many-bytes-in-a-javascript-string/29955838
-// Refactored to an arrow function by ACJ
-const getBinarySize = (string) => Buffer.byteLength(string, 'utf8');
-
-// respond function
-const respond = (request, response, content, type, statusCode) => {
-  response.writeHead(statusCode, { 'Content-type': type });
-  response.write(content);
-  response.end();
-};
-
-// get meta data when the server receives a head request
-const getMetaData = (request, response, content, acceptedTypes) => {
-  const type = findType(acceptedTypes);
-  const headers = {
-    'Content-type': type,
-    'Content-length': `${getBinarySize(content)}`,
-  };
-  response.writeHead(200, headers);
-  response.end();
-};
-
-// "Meta" refers to *meta data*, in this case the HTTP headers
-const sendJSONResponseMeta = (request, response, responseCode) => {
-  response.writeHead(responseCode, { 'Content-Type': 'application/json' });
-  response.end();
-};
-
-// function to get one joke in either json or xml
+// function to get one review in either json or xml
 const getRandomReview = (params, acceptedTypes) => {
-  // get a random number for selecting which joke
-  let reviewNumber = Math.floor(Math.random() * amountOfReviews);
-
+  // get a random number for selecting which review
+  let reviewNumber = randomNumber(amountOfReviews);
+  // array of platforms requested
   const platformParam = platformParamParse(params.platform);
   // review to send back
   let review;
 
+  // if there is platforms
   if (platformParam != null) {
-    // array to store objects with requested platform
     const platformArray = [];
-    // go through each review and check its platforms array
-    // to see if any of the pased in platforms are in it
-    for (let i = 0; i < reviewArray.length; i += 1) {
-      for (let y = 0; y < platformParam.length; y += 1) {
-        // if the platform is included and it's not already in the array add it
-        if (reviewArray[i].platforms.includes(platformParam[y])
-            && !platformArray.includes(reviewArray[i])) {
-          platformArray.push(reviewArray[i]);
-        }
-      }
-    }
+    platformCheck(platformParam, platformArray);
+
     // then set the review array equal to our new array
     // and make sure the random number recieved doesn't go out of bounds
     if (reviewNumber >= platformArray.length) {
-      reviewNumber = Math.floor(Math.random() * platformArray.length);
+      reviewNumber = randomNumber(platformArray.length);
     }
     review = platformArray[reviewNumber];
     // if there is no platformParam return normally
@@ -161,8 +193,8 @@ const getRandomReview = (params, acceptedTypes) => {
   }
 
   // client asked for xml
-  if (acceptedTypes[0] === 'text/xml') {
-    const xmlResponse = `<review><Game>${review.game}</Game><Rating>${review.rating}</Rating><Platforms>${review.platforms}</Platforms><Review>${review.content}</Review></review>`;
+  if (acceptedTypes.includes('text/xml')) {
+    const xmlResponse = xmlRes(review);
     return xmlResponse;
   }
   // defualt
@@ -174,38 +206,25 @@ const getRandomReview = (params, acceptedTypes) => {
 
 // function to get multiple jokes
 const getRandomReviews = (params, acceptedTypes) => {
+  // check the params and make sure they're valid
   const limit = testLimitParam(params.limit);
   const platformParam = platformParamParse(params.platform);
 
-  // shuffle the q array
+  // shuffle the review array
   reviewArray = _.shuffle(reviewArray);
 
   // create an array that only has the objects that have the requested platform
   const platformArray = [];
   if (platformParam != null) {
-    // go through each review and check its platforms array
-    // to see if any of the pased in platforms are in it
-    for (let i = 0; i < reviewArray.length; i += 1) {
-      for (let y = 0; y < platformParam.length; y += 1) {
-        // if the platform is included and it's not already in the array add it
-        if (reviewArray[i].platforms.includes(platformParam[y])
-            && !platformArray.includes(reviewArray[i])) {
-          platformArray.push(reviewArray[i]);
-        }
-      }
-    }
+    platformCheck(platformParam, platformArray);
   }
 
-  // reviewArray.platforms.includes(platformParam)
-
   // client asked for xml NEED TO UPDATE
-  if (acceptedTypes[0] === 'text/xml') {
+  if (acceptedTypes.includes('text/xml')) {
     let xmlResponse = '<reviews>';
 
     for (let i = 0; i < limit; i += 1) {
-      xmlResponse = `${xmlResponse}<review><Game>${reviewArray[i].game}</Game>
-      <Rating>${reviewArray[i].rating}</Rating><Platforms>${reviewArray[i].platforms}</Platforms>
-      <Review>${reviewArray[i].content}</Review></review>`;
+      xmlResponse = `${xmlResponse}${xmlRes(reviewArray[i])}`;
     }
     xmlResponse = `${xmlResponse} </reviews>`;
     return xmlResponse;
@@ -215,6 +234,7 @@ const getRandomReviews = (params, acceptedTypes) => {
   const jsonResponse = [];
 
   // testing check for if the platform param is used only send back objects with that platform
+  // make sure if there's only 1 it doesn't break
   for (let i = 0; i < limit; i += 1) {
     if (platformParam != null && i < platformArray.length) {
       jsonResponse.push(platformArray[i]);
@@ -228,6 +248,7 @@ const getRandomReviews = (params, acceptedTypes) => {
 };
 
 // starter code by Tony Jefferson
+// add review to array and obj if client sends it
 const addReview = (request, response, body) => {
   // here we are assuming an error, pessimistic aren't we?
   let responseCode = 400; // 400=bad request
@@ -241,19 +262,23 @@ const addReview = (request, response, body) => {
     return respond(request, response, JSON.stringify(responseJSON), 'application/json', responseCode);
   }
 
+  // if the ID matches a review currently there
+  // updated it
   const postedReview = reviews[body.id];
-  // we DID get a name and age
-  if (postedReview) { // if the user exists
+  if (postedReview) { // if the user wants to update their array
     responseCode = 204;
-    // initialize values
+    // update values
     postedReview.game = body.game;
     postedReview.rating = body.rating;
     // distinguish between getting 1 or multiple platforms
     if (typeof body.platforms === 'string') { postedReview.platforms = [body.platforms]; } else { postedReview.platforms = body.platforms; }
     postedReview.content = body.content;
-    return sendJSONResponseMeta(request, response, responseCode);
+    // tell the client content was updated but send no content
+    // and leave this function
+    return getMetaData(request, response, responseCode);
   }
 
+  // create a uuid for the new review
   const id = uuidv4();
 
   reviews[id] = {}; // make a new review
@@ -263,8 +288,7 @@ const addReview = (request, response, body) => {
   // distinguish between getting 1 or multiple platforms
   if (typeof body.platforms === 'string') { reviews[id].platforms = [body.platforms]; } else { reviews[id].platforms = body.platforms; }
   reviews[id].content = body.content;
-
-  // add the completed review to the array aswell
+  // add the completed review to the array as well
   reviewArray.push(reviews[id]);
 
   // increment to reflect new addition to array
@@ -272,19 +296,21 @@ const addReview = (request, response, body) => {
 
   responseCode = 201; // send "created" status code
   responseJSON.message = `Your Review for<b>${reviews[id].game}</b>was Created Successfully`;
-  responseJSON.id = `Use this ID to update your review in the future<br>ID:<b>${id}</b>`; // send the unique id back to the user
+  responseJSON.id = `Use this ID to update your review in the future:<br><b>${id}</b>`; // send the unique id back to the user
   return respond(request, response, JSON.stringify(responseJSON), 'application/json', responseCode);
 };
 
+// handle when server gets a GET or HEAD request for getRandomReview
 const getRandomReviewResponse = (request, response, acceptedTypes, httpMethod, params) => {
   if (httpMethod === 'GET') {
     respond(request, response,
       getRandomReview(params, acceptedTypes), findType(acceptedTypes), 200);
   } else if (httpMethod === 'HEAD') {
-    getMetaData(request, response, getRandomReview(acceptedTypes), acceptedTypes);
+    getMetaData(request, response, 200, acceptedTypes, getRandomReview(params, acceptedTypes));
   }
 };
 
+// handle when server gets a GET or HEAD request for getRandomReviews
 const getRandomReviewsResponse = (request, response, acceptedTypes, httpMethod, params) => {
   if (httpMethod === 'GET') {
     // eslint said this line was too long
@@ -296,7 +322,7 @@ const getRandomReviewsResponse = (request, response, acceptedTypes, httpMethod, 
       200,
     );
   } else if (httpMethod === 'HEAD') {
-    getMetaData(request, response, getRandomReviews(params, acceptedTypes), acceptedTypes);
+    getMetaData(request, response, 200, acceptedTypes, getRandomReviews(params, acceptedTypes));
   }
 };
 

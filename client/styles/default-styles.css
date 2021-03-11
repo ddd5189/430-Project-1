@@ -1,3 +1,4 @@
+/* give a small padding to everything */
 *{
     padding: 5px;
 }
@@ -7,18 +8,19 @@
 body::-webkit-scrollbar {
     display: none;
 }
-
-#left {
-    text-align: left;
+/* make the platform selector in app page stay when the page scrolls*/
+#plat {
+    position: fixed;
 }
 
 /* tooltip code provided by w3Schools https://www.w3schools.com/css/css_tooltip.asp */
-#uuidLabel {
+/* tooltip pop-up on submit page for ID text input */
+#tooltip {
     position: relative;
     display: inline-block;
 }
   
-#uuidLabel #tooltiptext {
+#tooltip #tooltiptext {
     visibility: hidden;
     background-color: lightgray;
     color: black;
@@ -36,6 +38,34 @@ body::-webkit-scrollbar {
     z-index: 1;
 }
 
-#uuidLabel:hover #tooltiptext {
+#tooltip:hover #tooltiptext {
     visibility: visible;
+}
+
+
+/* Keep footer at bottom of the page */
+/* Source https://www.freecodecamp.org/news/how-to-keep-your-footer-where-it-belongs-59c6aa05c59c/*/
+#page-container {
+    position: relative;
+    min-height: 95vh;
+}
+
+#content-wrap {
+    padding-bottom: 5rem;    /* Footer height */
+}
+  
+#footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 5rem;            /* Footer height */
+    color: white;
+    /* source https://www.reddit.com/r/gaming/comments/3ol6gm/i_made_a_fan_art_bannercollage_of_some_my/ */
+    background-image: url('/img.jpg');
+}
+
+/* because the footer text isn't very clear, when hovered make it easy to read */
+#footer span:hover{
+    color: black;
+    background-color: white;
 }

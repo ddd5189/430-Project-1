@@ -2,7 +2,6 @@
 const http = require('http');
 const url = require('url');
 const query = require('querystring');
-// const bootstrap = require('bootstrap')
 const htmlHandler = require('./htmlResponses.js');
 const responseHandler = require('./responses.js');
 
@@ -11,25 +10,27 @@ const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 // urlStruct
 const urlStruct = {
-  '/': htmlHandler.getIndexResponse,
-  '/app': htmlHandler.getAppResponse,
-  '/submit': htmlHandler.getSubmitResponse,
-  '/admin': htmlHandler.getAdminResponse,
-  '/documentation': htmlHandler.getDocumentationResponse,
-  '/review': responseHandler.getRandomReviewResponse,
-  '/reviews': responseHandler.getRandomReviewsResponse,
-  '/styles/default-styles.css': htmlHandler.getStylesResponse,
-  notFound: htmlHandler.get404Response,
+  '/': htmlHandler.getIndexResponse, // home page
+  '/app': htmlHandler.getAppResponse, // get review(s) page
+  '/submit': htmlHandler.getSubmitResponse, // submit page
+  '/admin': htmlHandler.getAdminResponse, // admin page
+  '/documentation': htmlHandler.getDocumentationResponse, // documentation page
+  '/review': responseHandler.getRandomReviewResponse, // review api endpoint
+  '/reviews': responseHandler.getRandomReviewsResponse, // reviews api endpoint
+  '/default-styles.css': htmlHandler.getStylesResponse, // default css
+  '/bootstrap.css': htmlHandler.getBootstrapResponse, // bootstrap css
+  '/bootstrap.min.css.map': htmlHandler.getBootstrapMapResponse, // bootstrap map css
+  '/img.jpg': htmlHandler.getImgResponse, // footer img
+  notFound: htmlHandler.get404Response, // 404 page
 };
 
-// code by Tony Jefferson
+// code provided by Tony Jefferson
 const handlePost = (request, response, parsedUrl) => {
   if (parsedUrl.pathname === '/add-review') {
     const body = [];
 
     // https://nodejs.org/api/http.html
-    request.on('error', (err) => {
-      // console.dir(err);
+    request.on('error', () => {
       response.statusCode = 400;
       response.end();
     });

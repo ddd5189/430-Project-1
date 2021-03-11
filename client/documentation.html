@@ -1,71 +1,78 @@
 <html>
-  <head>
-    <title>What to Play?</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link href="/styles/default-styles.css" type="text/css" rel="stylesheet" />
-    <script>
-    </script>
-  </head>
-  <body>
-    <header class="container-fluid text-center">
-      <h1>What to Play?</h1>
-      <nav class="nav nav-pills flex-column flex-sm-row">
-        <a class="flex-sm-fill text-sm-center nav-link" href ="/">Home</a>
-        <a class="flex-sm-fill text-sm-center nav-link" href = "app" class="badge badge-primary">Get a Review</a>
-        <a class="flex-sm-fill text-sm-center nav-link" href = "submit">Submit</a>
-        <a class="flex-sm-fill text-sm-center nav-link" href = "admin">Admin</a>
-      </nav>
-      <h2>Developer Documentation</h2>
-    </header>
 
-    <div class="container-fluid text-center">
-      <div class="row">
-        <div class="col-sm">
-          <section>
-            <h4>Get Params for<b>/review</b></h4>
-            <ul class="list-group">
-              <li class="list-group-item list-group-item-primary">limit</li>
-            </ul>
-            <br><br><br>
-            <h2>Endpoints</h2>
-            <p><a class="badge badge-pill badge-danger" href = "/review">/review</a></p>
-            <p><a class="badge badge-pill badge-danger" href = "/reviews?limit=1">/reviews</a></p>
-          </section>
-        </div>
-        <div class="col-sm">
-          <section>
-            <h4>Get Params for<b>/reviews</b></h4>
-            <ul class="list-group">
-              <li class="list-group-item list-group-item-primary">limit</li>
-              <li class="list-group-item list-group-item-primary">platform        
-                <ul class="list-group">
-                  <li class="list-group-item list-group-item-success">Xbox</li>
-                  <li class="list-group-item list-group-item-success">Playstation</li>
-                  <li class="list-group-item list-group-item-success">PC</li>
-                  <li class="list-group-item list-group-item-success">Nintendo Switch</li>
-                  <li class="list-group-item list-group-item-success">Phone</li>
-                </ul>
-              </li>
-            </ul>
-          </section>
-        </div>
-        <div class="col-sm">
-          <section>
-            <h4>Post Params for both endpoints</h4>
-            <ul class="list-group">
-              <li class="list-group-item list-group-item-primary">game</li>
-              <li class="list-group-item list-group-item-primary">rating</li>
-              <li class="list-group-item list-group-item-primary">platforms</li>
-              <li class="list-group-item list-group-item-primary">review</li>
-              <li class="list-group-item list-group-item-primary">id*</li>
-            </ul>
-            <p>*Used when user wants to update their review</p>
-          </section>
+<head>
+  <title>What to Play?</title>
+  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"> -->
+  <link href="/default-styles.css" type="text/css" rel="stylesheet" />
+  <link href="/bootstrap.css" type="text/css" rel="stylesheet" />
+  <script>
+  </script>
+</head>
+
+<body>
+  <div id="page-container">
+    <div id="content-wrap">
+      <header class="container-fluid text-center">
+        <h1>What to Play?</h1>
+        <nav class="nav nav-pills flex-column flex-sm-row">
+          <a class="flex-sm-fill text-sm-center nav-link" href="/">Home</a>
+          <a class="flex-sm-fill text-sm-center nav-link" href="app" class="badge badge-primary">Get a Review</a>
+          <a class="flex-sm-fill text-sm-center nav-link" href="submit">Submit</a>
+          <a class="flex-sm-fill text-sm-center nav-link" href="admin">Admin</a>
+        </nav>
+        <h2>Developer Documentation</h2>
+      </header>
+
+      <div class="container-fluid text-center">
+        <div class="row">
+          <div class="col-sm">
+            <section>
+              <h4>Get Params for<b>/review</b></h4>
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-primary">limit</li>
+              </ul>
+              <br><br><br>
+              <h2>Endpoints</h2>
+              <span><a class="badge badge-pill badge-danger" href="/review">/review</a></span>
+              <span><a class="badge badge-pill badge-danger" href="/reviews?limit=1">/reviews</a></span>
+            </section>
+          </div>
+          <div class="col-sm">
+            <section>
+              <h4>Get Params for<b>/reviews</b></h4>
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-primary">limit</li>
+                <li class="list-group-item list-group-item-primary">platform
+                  <ul class="list-group">
+                    <li class="list-group-item list-group-item-success">Xbox</li>
+                    <li class="list-group-item list-group-item-success">Playstation</li>
+                    <li class="list-group-item list-group-item-success">PC</li>
+                    <li class="list-group-item list-group-item-success">Nintendo Switch</li>
+                    <li class="list-group-item list-group-item-success">Phone</li>
+                  </ul>
+                </li>
+              </ul>
+            </section>
+          </div>
+          <div class="col-sm">
+            <section>
+              <h4>Post Params for both endpoints</h4>
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-primary">game</li>
+                <li class="list-group-item list-group-item-primary">rating</li>
+                <li class="list-group-item list-group-item-primary">platforms</li>
+                <li class="list-group-item list-group-item-primary">review</li>
+                <li id ="tooltip" class="list-group-item list-group-item-primary">id*<span id="tooltiptext">Used when user wants to update their review</span></li>
+              </ul>
+            </section>
+          </div>
         </div>
       </div>
+      <footer class="container-fluid text-center pt-2" id="footer">
+        <span>&copy; Drew Donovan 2021</span>
+      </footer>
     </div>
-    <footer class="container-fluid text-center pt-2" id="footer">
-      <p>&copy; Drew Donovan 2021</p>
-    </footer>
-  </body>
+  </div>
+</body>
+
 </html>
