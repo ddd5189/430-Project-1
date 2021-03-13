@@ -3,8 +3,7 @@
 
 <head>
   <!--Code from stackoverflow: https://stackoverflow.com/questions/11996257/the-character-encoding-of-the-html-document-was-not-declared-->
-  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-  <meta content="utf-8" http-equiv="encoding">
+  <meta charset="UTF-8">
   <title>Submit a Review</title>
   <!--Default Style Sheet-->
   <link href="/default-styles.css" type="text/css" rel="stylesheet" />
@@ -173,7 +172,7 @@
           <label for="ratingField">Rating (1-10): </label><br>
           <input id="ratingField" type="number" name="rating" min="1" max="10" step="1" /><br>
 
-          <label for="platforms">Platforms<br>(Select all that Apply):</label><br>
+          <span>Platforms<br>(Select all that Apply):</span><br>
           <div id="left" class="mx-auto" style="width: 200px;">
             <input id="xbox" type="checkbox" value="Xbox">
             <label for="xbox"> Xbox</label><br>
