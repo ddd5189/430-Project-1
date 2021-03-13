@@ -78,7 +78,7 @@ const findType = (acceptedTypes) => {
 // Refactored to an arrow function by ACJ
 const getBinarySize = (string) => Buffer.byteLength(string, 'utf8');
 
-// respond function
+// respond template
 const respond = (request, response, content, type, statusCode) => {
   response.writeHead(statusCode, { 'Content-type': type });
   response.write(content);
@@ -123,25 +123,7 @@ const platformCheck = (platformParam, platformArray) => {
 // xml response format
 const xmlRes = (rev) => `<review><Game>${rev.game}</Game><Rating>${rev.rating}</Rating><Platforms>${rev.platforms}</Platforms><Review>${rev.content}</Review></review>`;
 
-// const populateReview = (body) => {
-//   let postedRev = {
-//     game: {},
-//     rating: {},
-//     platforms: {},
-//     content: {},
-//   };
-
-//   postedRev.game = body.game;
-//   postedRev.rating = body.rating;
-//   // distinguish between getting 1 or multiple platforms
-//   if (typeof body.platforms === 'string')
-// { postedRev.platforms = [body.platforms]; } else { postedRev.platforms = body.platforms; }
-//   postedRev.content = body.content;
-//   return postedRev;
-// };
-
 // amount of reviews
-
 let amountOfReviews = reviewArray.length;
 
 // validate the limit param
@@ -257,7 +239,7 @@ const addReview = (request, response, body) => {
     message: 'Please make sure you fill in all the require fields',
   };
 
-  // missing fields
+  // submission cannot miss any of these fields
   if (!body.game || !body.rating || !body.platforms || !body.content) {
     return respond(request, response, JSON.stringify(responseJSON), 'application/json', responseCode);
   }

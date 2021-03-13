@@ -11,12 +11,14 @@ const bootstrapFile = fs.readFileSync(`${__dirname}/../node_modules/bootstrap/di
 const bootstrapMapFile = fs.readFileSync(`${__dirname}/../node_modules/bootstrap/dist/css/bootstrap.min.css.map`);
 const imgFile = fs.readFileSync(`${__dirname}/../client/media/Proj1Img.jpg`);
 
+// response template
 const clientResponse = (request, response, content, type, statusCode) => {
   response.writeHead(statusCode, { 'Content-Type': type });
   response.write(content);
   response.end();
 };
 
+// all the html/css/img respone functions
 const getIndexResponse = (request, response) => clientResponse(request, response, indexPage, 'text/html', 200);
 
 const getAppResponse = (request, response) => clientResponse(request, response, appPage, 'text/html', 200);

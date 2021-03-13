@@ -2,8 +2,9 @@
 
 <head>
   <title>What to Play?</title>
-  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"> -->
+  <!--Default Style Sheet--> 
   <link href="/default-styles.css" type="text/css" rel="stylesheet" />
+  <!--Bootstrap Style Sheet-->
   <link href="/bootstrap.css" type="text/css" rel="stylesheet" />
   <script>
   </script>
@@ -29,12 +30,16 @@
             <section>
               <h4>Get Params for<b>/review</b></h4>
               <ul class="list-group">
-                <li class="list-group-item list-group-item-primary">limit</li>
+                <li class="list-group-item list-group-item-primary">platform
+                  <ul class="list-group">
+                    <li class="list-group-item list-group-item-success">Xbox</li>
+                    <li class="list-group-item list-group-item-success">Playstation</li>
+                    <li class="list-group-item list-group-item-success">PC</li>
+                    <li class="list-group-item list-group-item-success">Nintendo Switch</li>
+                    <li class="list-group-item list-group-item-success">Phone</li>
+                  </ul>
+                </li>
               </ul>
-              <br><br><br>
-              <h2>Endpoints</h2>
-              <span><a class="badge badge-pill badge-danger" href="/review">/review</a></span>
-              <span><a class="badge badge-pill badge-danger" href="/reviews?limit=1">/reviews</a></span>
             </section>
           </div>
           <div class="col-sm">
@@ -52,6 +57,10 @@
                   </ul>
                 </li>
               </ul>
+              <br>
+              <h2>Endpoints</h2>
+              <span><a class="btn btn-danger" href="/review">/review</a></span>
+              <span><a class="btn btn-danger" href="/reviews?limit=1">/reviews</a></span>
             </section>
           </div>
           <div class="col-sm">

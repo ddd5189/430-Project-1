@@ -2,9 +2,9 @@
 
 <head>
     <title>Get a Review</title>
-    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"> -->
-    <!-- <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/" /> -->
+    <!--Default Style Sheet-->
     <link href="/default-styles.css" type="text/css" rel="stylesheet" />
+    <!--Bootstrap Style Sheet-->
     <link href="/bootstrap.css" type="text/css" rel="stylesheet" />
     <script>
         // store all the current platforms user is searching for
@@ -46,6 +46,7 @@
             const reviewContainerDom = document.querySelector("#reviewContainer");
             const reviewsContainerDom = document.querySelector("#reviewsContainer");
 
+            // store ther review returned
             const object = obj.review;
             // check how many objects are returned and how they are returned
             // if it sends back a single review but not in an array (Get a Review)
@@ -121,6 +122,7 @@
             xhr.send();
         };
 
+        // set up all the event listeners 
         const init = () => {
             // Listeners for the buttons
             document.querySelector("#btnReview").addEventListener("click", downloadReview);
