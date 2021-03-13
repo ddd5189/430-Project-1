@@ -1,6 +1,10 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
+  <!--Code from stackoverflow: https://stackoverflow.com/questions/11996257/the-character-encoding-of-the-html-document-was-not-declared-->
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
   <title>Submit a Review</title>
   <!--Default Style Sheet-->
   <link href="/default-styles.css" type="text/css" rel="stylesheet" />
@@ -158,15 +162,15 @@
 
       </header>
 
-      <section class="container-fluid text-center">
+      <div class="container-fluid text-center">
         <h2>Submit your own Review!</h2>
-      </section>
+      </div>
 
-      <section>
+      <div>
         <form id="reviewForm" action="/add-review" method="POST">
-          <label for="game">Game Title: </label><br>
+          <label for="gameField">Game Title: </label><br>
           <input id="gameField" type="text" name="game" /><br>
-          <label for="rating">Rating (1-10): </label><br>
+          <label for="ratingField">Rating (1-10): </label><br>
           <input id="ratingField" type="number" name="rating" min="1" max="10" step="1" /><br>
 
           <label for="platforms">Platforms<br>(Select all that Apply):</label><br>
@@ -184,16 +188,16 @@
           </div>
 
 
-          <label for="content">Review: </label><br>
+          <label for="contentField">Review: </label><br>
           <textarea id="contentField" name="content" rows="5" cols="60"></textarea><br><br>
-          <label id="tooltip" for="uuid">If you want to update a review you already submitted, put your ID here:<span
+          <label id="tooltip" for="uuidField">If you want to update a review you already submitted, put your ID here:<span
               id="tooltiptext">Not required for a new submission</span></label><br>
           <input id="uuidField" type="text" name="uuid" /><br><br>
           <input id="submit" type="submit" class="btn btn-outline-success" value="Add Review" />
         </form>
-      </section>
-      <section id="content">
-      </section>
+      </div>
+      <div id="content">
+      </div>
       <footer class="container-fluid text-center pt-2" id="footer">
         <span>&copy; Drew Donovan 2021</span>
       </footer>
